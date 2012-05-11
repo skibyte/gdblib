@@ -1,0 +1,6 @@
+&"info break\n"
+~"Num     Type           Disp Enb Address            What\n"
+~"1       breakpoint     keep y   0x98ea1 in main at src/main.c:169\n"
+~"2       breakpoint     keep y   0x98e77 in main at src/main.c:192\n"
+^done
+

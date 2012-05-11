@@ -1,0 +1,8 @@
+&"s\n"
+^running
+*running,thread-id="all"
+(gdb) 
+~"13\t}\n"
+*stopped,frame={addr="0x000000000040053b",func="print_point",args=[{name="p",value="0x7fffffffe320"}],file="module1/functions.c",fullname="/home/lobo/programming/projects/python/gdb_frontend/test/org/qdebug/gdb/testapplication/module1/functions.c",line="13"},thread-id="1",stopped-threads="all",core="1"
+(gdb) 
+

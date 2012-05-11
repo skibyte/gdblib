@@ -1,0 +1,186 @@
+# 
+# GdbLib - A Gdb python library.
+# Copyright (C) 2012  Fernando Castillo
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+class DefaultCommand():
+    def accept(self,visitor):
+        visitor.visitDefaultCommand(self)
+
+    def setCompleted(self,value):
+        self.completed = value
+
+    def isComplete(self):
+        return self.completed
+
+class AddDirectoryCommand(DefaultCommand):
+    def __init__(self, directory):
+        self.directory = directory
+
+    def getValue(self):
+        return "-environment-directory " + self.directory +"\n"
+
+    def accept(self,visitor):
+        visitor.visitAddDirectoryCommand(self)
+
+
+class ChangeDirectoryCommand(DefaultCommand):
+    def __init__(self,directory):
+        self.directory = directory
+
+    def getValue(self):
+        return "-environment-cd " + self.directory + "\n"
+
+    def accept(self,visitor):
+        visitor.visitChangeDirectoryCommand(self)
+
+class ListSourceFilesCommand(DefaultCommand):
+    def getValue(self):
+        return "interpreter-exec mi \"-file-list-exec-source-files\"\n"    
+    def getSourceFiles(self):    
+        return self.sourcefiles
+
+    def setSourceFiles(self,files):
+        self.sourcefiles = files
+
+    def accept(self,visitor):
+        visitor.visitListSourceFilesCmd(self)
+
+class AdvanceCommand(DefaultCommand):
+    def accept(self,visitor):
+        visitor.visitAdvanceCommand(self)
+
+    def setLocation(self,location):
+        self.location = location
+
+    def getLocation(self):
+        return self.location
+
+class NextCommand(AdvanceCommand):
+    def getValue(self):
+        return "next\n"
+
+class StepCommand(AdvanceCommand):
+    def getValue(self):
+        return "step\n"
+
+class RunCommand(AdvanceCommand):
+    def __init__(self, arguments):
+        self.arguments = arguments
+
+    def getValue(self):
+        return "run " + self.arguments + " > output.console\n"
+
+class BacktraceCommand(DefaultCommand):
+    backtrace = None
+
+    def getValue(self):
+        return "backtrace\n"
+
+    def getBacktrace(self):
+        return self.backtrace
+
+class PrintCommand(DefaultCommand):
+    def getValue(self, variable):
+        return "print " + variable + "\n"
+
+class PrintXCommand(DefaultCommand):
+    def getValue(self, variable):
+        return "print " + variable + "\n"
+
+class SetVarCommand(DefaultCommand):
+    def __init__(self, variable, value):
+        self.variable = variable 
+        self.value = value
+
+    def getValue(self):
+        return "set var " + self.variable + "=" + self.value
+
+class ReturnCommand(DefaultCommand):
+    def getValue(self):
+        return "return\n"
+
+class ContinueCommand(DefaultCommand):
+    def getValue(self):
+        return "continue\n"
+
+class FinishCommand(DefaultCommand):
+    def getValue(self):
+        return "finish\n"
+
+class WhatIsCommand(DefaultCommand):
+    def __init__(self,variable):
+        self.variable = variable
+
+    def getValue(self):
+        return "whatis " + self.variable
+
+class AddBreakpointCommand(DefaultCommand):
+    def __init__(self,filename, line):
+        self.filename = filename
+        self.line = line
+        self.breakpointAdded = None
+    
+    def getValue(self):
+        command =  "break " + self.filename +":"+ str(self.line)+"\n"
+        return command
+
+    def setBreakpointAdded(self, breakpoint):
+        self.breakpoint = breakpoint
+    
+    def getBreakpointAdded(self):
+        return self.breakpoint
+
+    def accept(self,visitor):
+        visitor.visitAddBreakpointCommand(self)
+
+class DeleteBreakpointCommand(DefaultCommand):
+    def __init__(self, n):
+        self.number = n
+
+    def getValue(self):
+        return 'delete ' + str(self.number) + '\n'
+
+    def accept(self,visitor):
+        visitor.visitDeleteBreakpointCommand(self)
+
+class AddWatchpointCommand(DefaultCommand):
+    def __init__(self):
+        pass
+
+class DeleteWatchpointCommand(DefaultCommand):
+    def __init__(self):
+        pass
+
+class InfoBreakpointCommand(DefaultCommand):
+    def __init__(self):
+        self.breakpoints = None
+
+    # FIXME: Remove this comment.
+    # This tests create a single definition of a thread command 
+    # The most important aspect here is howto eliminate most of the leak
+    # resources 
+    def getValue(self):
+        command = "info breakpoint\n"
+        return command
+
+    def setBreakpoints(self,breakpoints):
+        self.breakpoints = breakpoints
+
+    def getBreakpoints(self):
+        return self.breakpoints
+
+    def accept(self, visitor):
+        visitor.visitInfoBreakpointCommand(self)

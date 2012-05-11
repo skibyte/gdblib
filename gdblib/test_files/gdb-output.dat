@@ -1,0 +1,58 @@
+=thread-group-added,id="i1"
+~"GNU gdb (GDB) 7.2\n"
+~"Copyright (C) 2010 Free Software Foundation, Inc.\n"
+~"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.  Type \"show copying\"\nand \"show warranty\" for details.\n"                                                                                    
+~"This GDB was configured as \"x86_64-unknown-linux-gnu\".\nFor bug reporting instructions, please see:\n"
+~"<http://www.gnu.org/software/gdb/bugs/>...\n"
+~"Reading symbols from /home/lobo/programming/projects/c++/qt_vim/vim73/myvim..."
+~"done.\n"
+(gdb) 
+info functions
+&"info functions\n"
+~"All defined functions:\n"
+~"\nFile "
+~"src/buffer.c:\n"                                                                                                                   
+~"int buflist_getfile(int, linenr_T, int, int);\n"
+~"void buflist_getfpos(void);\n"
+~"void buflist_list(exarg_T *);\n"
+~"static int ti_change(char_u *, char_u **);\n"
+~"static int wininfo_other_tab_diff(wininfo_T *);\n"
+~"\nFile "
+~"src/charset.c:\n"
+~"void backslash_halve(char_u *);\n"
+~"char_u *backslash_halve_save(char_u *);\n"
+~"int buf_init_chartab(buf_T *, int);\n"
+~"\nFile "
+~"src/pty.c:\n"
+~"int OpenPTY(char **);\n"
+~"int SetupSlavePTY(int);\n"
+~"static void initmaster(int);\n"
+~"\nNon-debugging symbols:\n"
+~"0x0000000000402e08  _init\n"
+~"0x0000000000402e30  ftell\n"
+~"0x0000000000402e30  ftell@plt\n"
+~"0x0000000000402e40  __errno_location\n"
+~"0x0000000000402e40  __errno_location@plt\n"
+~"0x0000000000402e50  printf\n"
+~"0x0000000000402e50  printf@plt\n"
+~"0x0000000000402e60  htons\n"
+~"0x0000000000402e60  htons@plt\n"
+~"0x0000000000402e70  uname\n"
+~"0x0000000000402e70  uname@plt\n"
+~"0x0000000000402e80  atan2\n"
+~"0x0000000000402e80  atan2@plt\n"
+~"0x0000000000402e90  rewind\n"
+~"0x0000000000402e90  rewind@plt\n"
+^done
+break main
+&"break main\n"
+~"Breakpoint 1 at 0x498ea1: file src/main.c, line 169.\n"
+^done
+info break
+&"info break\n"
+~"Num     Type           Disp Enb Address            What\n"
+~"1       breakpoint     keep y   0x0000000000498ea1 in main at src/main.c:169\n"
+^done
+
+
+
