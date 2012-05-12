@@ -20,6 +20,8 @@ import os
 
 from gdblib.gdb import GDB
 from gdblib.exceptions import NotConnectedError
+from gdblib.exceptions import NoLineError
+from gdblib.exceptions import NoSourceFileError
 
 class GDBTestCase(unittest.TestCase):
     def setUp(self):
@@ -48,8 +50,8 @@ class GDBTestCase(unittest.TestCase):
     def testAddBreakpoint_NotConnectedException(self):
         self.assertRaises(NotConnectedError, self.gdb.addBreakpoint,'','')
 
-    def testInfoBreakpoints_NotConnectedException(self):
-        self.assertRaises(NotConnectedError, self.gdb.infoBreakpoints)
+    def testGetBreakpoints_NotConnectedException(self):
+        self.assertRaises(NotConnectedError, self.gdb.getBreakpoints)
 
     def testDeleteBreakpoint_NotConnectedException(self):
         self.assertRaises(NotConnectedError, self.gdb.deleteBreakpoint,0)
@@ -116,9 +118,8 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(file2, dict2['file'])
         self.assertEquals(fullname2, dict2['fullname'])
 
-    #def testRun(self):
-        #self.gdb.run()
-        #pri
+    def testRun(self):
+        self.connectedGdb.run()
 
     #def testStep(self):    
         #""
@@ -127,42 +128,35 @@ class GDBTestCase(unittest.TestCase):
         #""
 
     def testAddBreakpoint(self):
-        self.assertEquals(0, self.connectedGdb.getState().getNumberOfBreakpoints())
+        self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
         self.connectedGdb.addBreakpoint(path,6)
-        self.assertEquals(1, self.connectedGdb.getState().getNumberOfBreakpoints())
-        breakpoint = self.connectedGdb.getState().getBreakpoint(0)
-        self.assertEquals(1, breakpoint.getNumber())
-        self.assertEquals('breakpoint', breakpoint.getType())
-        self.assertEquals('main', breakpoint.getFunction())
-        self.assertEquals('main.c', breakpoint.getSourceFile())
-        self.assertEquals(6, breakpoint.getLineNumber())
+        self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
+        breakpoints = self.connectedGdb.getBreakpoints()
+        self.assertEquals(1, breakpoints[0].getNumber())
+        self.assertEquals('breakpoint', breakpoints[0].getType())
+        self.assertEquals('main', breakpoints[0].getFunction())
+        self.assertEquals('main.c', breakpoints[0].getSourceFile())
+        self.assertEquals(6, breakpoints[0].getLineNumber())
 
-    
+    def testAddBreakpoint_NoSourceFileError(self):
+        self.assertRaises(NoSourceFileError, self.connectedGdb.addBreakpoint, 'incorrectfile', 6)
+
+    def testAddBreakpoint_NoLineError(self):
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.assertRaises(NoLineError, self.connectedGdb.addBreakpoint, path, 99)
+
     def testDeleteBreakpoint(self):
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
         self.connectedGdb.addBreakpoint(path,6)
-        self.assertEquals(1, self.connectedGdb.getState().getNumberOfBreakpoints())
-        brk = self.connectedGdb.getState().getBreakpoint(0)
-        self.connectedGdb.deleteBreakpoint(brk.getNumber())
-        self.assertEquals(0, self.connectedGdb.getState().getNumberOfBreakpoints())
+        self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
+        breakpoints = self.connectedGdb.getBreakpoints()
+        self.connectedGdb.deleteBreakpoint(breakpoints[0].getNumber())
+        self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
     
     #def testAddWatchPoint(self):
         #pass
     
-    def testInfoBreakpoints(self):
-        self.assertEquals(0, self.connectedGdb.getState().getNumberOfBreakpoints())
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
-        self.connectedGdb.addBreakpoint(path,6)
-        self.assertEquals(1, self.connectedGdb.getState().getNumberOfBreakpoints())
-        self.connectedGdb.infoBreakpoints()
-        breakpoint = self.connectedGdb.getState().getBreakpoint(0)
-        self.assertEquals(1, breakpoint.getNumber())
-        self.assertEquals('breakpoint', breakpoint.getType())
-        self.assertEquals('main', breakpoint.getFunction())
-        self.assertEquals('main.c', breakpoint.getSourceFile())
-        self.assertEquals(6, breakpoint.getLineNumber())
-
     #def testDeleteWatchpoint(self):
         #path =  os.getcwd() + os.sep + 'test/org/qdebug/gdb/testapplication/main.c'
         #self.gdb.addWatchpoint(path,6)

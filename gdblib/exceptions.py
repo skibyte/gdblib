@@ -17,3 +17,11 @@
 #
 class NotConnectedError(Exception) : 
     pass
+
+class NoSourceFileError(Exception) : 
+    pass
+class FunctionNotDefinedError(Exception):
+    pass
+
+class NoLineError(Exception):
+    pass

@@ -1,0 +1,5 @@
+&"break main.c:99\n"
+&"No line 99 in file \"main.c\".\n"
+~"Breakpoint 2 (main.c:99) pending.\n"
+=breakpoint-created,bkpt={number="2",type="breakpoint",disp="keep",enabled="y",addr="<PENDING>",pending="main.c:99",times="0",original-location="main.c:99"}
+^done

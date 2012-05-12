@@ -1,0 +1,5 @@
+&"break dy.c:435\n"
+&"No source file named dy.c.\n"
+~"Breakpoint 1 (dy.c:435) pending.\n"
+=breakpoint-created,bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="<PENDING>",pending="dy.c:435",times="0",original-location="dy.c:435"}
+^done

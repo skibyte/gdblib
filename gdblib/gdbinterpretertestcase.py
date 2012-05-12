@@ -17,6 +17,8 @@
 #
 import unittest;
 from gdblib.gdbinterpreter import GDBInterpreter;
+from gdblib.exceptions import NoLineError;
+from gdblib.exceptions import NoSourceFileError;
 
 class GDBInterpreterTestCase(unittest.TestCase):
     def setUp(self):
@@ -40,6 +42,20 @@ class GDBInterpreterTestCase(unittest.TestCase):
         breakpoint = self.interpreter.parseAddBreakpointCommand(content)
 
         self._testBreak(breakpoint, 1,'', '0x498ea1', '', 169, 'src/main.c') 
+
+    def testParse_AddBreakpoint_NoSourceError(self):
+        #"break main"
+        handle = open('gdblib/test_files/add-breakpoint-no-source.dat','r')
+        content = handle.readlines()
+        handle.close()
+        self.assertRaises(NoSourceFileError, self.interpreter.parseAddBreakpointCommand, content)
+
+    def testParse_AddBreakpoint_NoLineError(self):
+        #"break main"
+        handle = open('gdblib/test_files/add-breakpoint-no-line.dat','r')
+        content = handle.readlines()
+        handle.close()
+        self.assertRaises(NoLineError, self.interpreter.parseAddBreakpointCommand, content)
 
     def testParse_Info_Functions(self):
         #"info functions"

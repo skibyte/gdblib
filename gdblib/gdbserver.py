@@ -63,8 +63,11 @@ class GDBServer(Thread):
         self.process.stdin.write(cmd.getValue())
         
         self.cmdcondition.wait()
-        self.interpreter.parse(cmd,self.output.split('\n')) 
-        self.cmdcondition.release()
+        try:
+            self.interpreter.parse(cmd,self.output.split('\n')) 
+        finally:
+            self.cmdcondition.release()
+
 
 
     # FIXME: Start gdb without confirmation questions

@@ -18,36 +18,6 @@
 class GDBState():
     def __init__(self):
         self.connected = False
-        self.breakpoints = []
-        self.listeners = []
-        self.watchpoints = []
-
-    def addListener(self,listener):
-        self.listeners.append(listener)
-
-    def getNumberOfBreakpoints(self):
-
-        return len(self.breakpoints)
-
-    def getBreakpoint(self, index):
-        return self.breakpoints[index]
-
-    def getBreakpoints(self):
-        return self.breakpoints;
-
-    def setBreakpoints(self,breakpoints):
-        self.breakpoints = breakpoints
-
-    def addBreakpoint(self, breakpoint):
-        self.breakpoints.append(breakpoint)
-        for listener in self.listeners:
-            listener.updateBreakpoints()
-     
-    def deleteBreakpoint(self, breakpoint):
-        self.breakpoints.remove(breakpoint)
-
-    def addWatchpoint(self,watchpoint):
-        self.watchpoints.append(watchpoint)
 
     def setCurrentLocation(self,currentfile,currentline):
         self.currentfile = currentfile

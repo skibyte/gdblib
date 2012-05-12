@@ -80,26 +80,19 @@ class GDB():
     def addBreakpoint(self, filename, line):
         self.checkConnection();
         cmd = self.factory.createAddBreakpointCommand(filename,line)
-        self.gdbserver.send(cmd)
-        if cmd.getBreakpointAdded() != None:
-            self.state.addBreakpoint(cmd.getBreakpointAdded())
+        self.gdbserver.send(cmd)    
 
-        self.infoBreakpoints()            
-
-    def infoBreakpoints(self):
+    def getBreakpoints(self):
         self.checkConnection();
         cmd  = self.factory.createInfoBreakpointCommand()
         self.gdbserver.send(cmd)
-        if cmd.getBreakpoints() != None:
-            self.state.setBreakpoints(cmd.getBreakpoints())
+        return cmd.getBreakpoints()
 
     def deleteBreakpoint(self, number):    
         self.checkConnection();
         cmd = self.factory.createDeleteBreakpointCommand(number)
         self.gdbserver.send(cmd)
 
-        self.infoBreakpoints()
-    
     def addWatchpoint(self):
         self.checkConnection();
     
@@ -121,7 +114,7 @@ class GDB():
     def run(self):
         self.checkConnection();
 
-        cmd = self.factory.createRunCommand(self,apparguments)
+        cmd = self.factory.createRunCommand(self.apparguments)
         self.gdbserver.send(cmd)
         location = cmd.getLocation()
         if location.has_key('fullname'):

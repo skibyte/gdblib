@@ -15,7 +15,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-from gdblib.breakpoint import Breakpoint;
+from gdblib.breakpoint import Breakpoint
+from gdblib.exceptions import NoLineError
+from gdblib.exceptions import NoSourceFileError
 import re;
 
 class GDBInterpreter():
@@ -59,6 +61,14 @@ class GDBInterpreter():
                 line = int(matches.group(4))
                 breakpoint = Breakpoint(number,'',address,'',source, line)
                 return breakpoint
+
+            matches = re.match('.*No\sline\s\d+\sin\sfile\s.*',line)
+            if(matches):
+                raise NoLineError("Breakpoint could not be added")
+
+            matches = re.match('.*No\ssource\sfile\snamed\s.*',line)
+            if(matches):
+                raise NoSourceFileError("Breakpoint could not be added")
 
         return breakpoint                
 
