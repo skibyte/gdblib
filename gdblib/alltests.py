@@ -21,7 +21,8 @@ import sys
 sys.path.append('src')
 
 from gdblib.gdbinterpretertestcase import GDBInterpreterTestCase;
-from gdblib.gdbtestcase import GDBTestCase;
+from gdblib.gdbtestcase import GDBTestCase
+from gdblib.gdbservertestcase import GDBServerTestCase
 from gdblib.utiltestcase import UtilTestCase
 from gdblib.breakpointtestcase import BreakpointTestCase;
 from gdblib.cmdtestcase import *
@@ -32,12 +33,13 @@ def main():
     loader = unittest.TestLoader()
 
     suite = unittest.TestSuite()
-    suite.addTests(loader.loadTestsFromTestCase(GDBInterpreterTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(GDBTestCase))
-    suite.addTests(loader.loadTestsFromTestCase(UtilTestCase))
-    suite.addTests(loader.loadTestsFromTestCase(BreakpointTestCase))
-    suite.addTests(loader.loadTestsFromTestCase(DefaultCommandTestCase))
-    suite.addTests(loader.loadTestsFromTestCase(AddDirectoryCommandTestCase))
+    #suite.addTests(loader.loadTestsFromTestCase(GDBServerTestCase))
+   # suite.addTests(loader.loadTestsFromTestCase(GDBInterpreterTestCase))
+    suite.addTests(loader.loadTestsFromTestCase(GDBTestCase))
+    #suite.addTests(loader.loadTestsFromTestCase(UtilTestCase))
+    #suite.addTests(loader.loadTestsFromTestCase(BreakpointTestCase))
+    #suite.addTests(loader.loadTestsFromTestCase(DefaultCommandTestCase))
+    #suite.addTests(loader.loadTestsFromTestCase(AddDirectoryCommandTestCase))
     #suite.addTests(loader.loadTestsFromTestCase(ChangeDirectoryCommandTestCase))
     #suite.addTests(loader.loadTestsFromTestCase(ListSourceFilesCommandTestCase))
     #suite.addTests(loader.loadTestsFromTestCase(AdvanceCommandTestCase))

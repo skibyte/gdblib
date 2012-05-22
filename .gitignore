@@ -1,2 +1,5 @@
 *.pyc
 build
+*.o
+tags
+Session.vim

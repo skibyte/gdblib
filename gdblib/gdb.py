@@ -28,22 +28,21 @@ from os import path;
 # FIXME: Add support for attaching into a process
 
 class GDB():
-    core = False
-    log = Logger("Gdb")
     def __init__(self):
+        self.core = False
+        self.log = Logger("Gdb")
         self.factory = CommandFactory()
         self.state = GDBState()
+        self.fileLocationListeners = []
+        self.standardOutputListeners = []
 
-    def connectApp(self, apppath,apparguments, observer ):
-        self.observer = observer
+    def connectApp(self, apppath,apparguments):
         self.apppath = apppath
         self.apparguments = apparguments
         arguments = ['gdb','-i','mi','-q',self.apppath]
         self.connect(arguments)
-
     
-    def connectCore(self,apppath,corepath,observer):
-        self.observer = observer
+    def connectCore(self,apppath,corepath):
         self.apppath = apppath
         arguments = ['gdb','-i','mi','-q',self.apppath, corepath]
         self.connect(arguments)
@@ -55,11 +54,17 @@ class GDB():
         handle.close();
         self.process = subprocess.Popen(arguments,
                 shell=False,stdin=subprocess.PIPE,
-                stdout= subprocess.PIPE)
-        self.gdbserver = GDBServer(self.apppath,self.process)
+                stdout = subprocess.PIPE)
+        self.gdbserver = GDBServer(self.process)
         self.gdbserver.start()
         self.state.setConnected(True)
         self.changeDirectory(path.dirname(arguments[4])) 
+
+    def addNewFileLocationListener(self, listener):
+        self.fileLocationListeners.append(listener)
+
+    def addStandardOutputListener(self, listener):
+        self.standardOutputListeners.append(listener)
 
     def changeDirectory(self,directory):
         self.checkConnection();
@@ -119,8 +124,7 @@ class GDB():
         location = cmd.getLocation()
         if location.has_key('fullname'):
             self.log.debug("Reporting new location: " + location['fullname'] +":"+str(location['line']))
-            self.observer.newlocation(location['fullname'], location['line'])
-        
+            self.updateNewFileLocationListeners(location['fullname'], location['line'])
     
     def step(self):
         self.checkConnection();
@@ -129,7 +133,7 @@ class GDB():
         location = cmd.getLocation()
         if location.has_key('fullname'):
             self.log.debug("Reporting new location: " + location['fullname'] +":"+str(location['line']))
-            self.observer.newlocation(location['fullname'], location['line'])
+            self.updateNewFileLocationListeners(location['fullname'], location['line'])
     
     def next(self):
         self.checkConnection();
@@ -138,13 +142,17 @@ class GDB():
         location = cmd.getLocation()
         if location.has_key('fullname'):
             self.log.debug("Reporting new location: " + location['fullname'] +":"+str(location['line']))
-            self.observer.newlocation(location['fullname'], location['line'])
+            self.updateNewFileLocationListeners(location['fullname'], location['line'])
 
     def backtrace(self):
         self.checkConnection();
         cmd = self.factory.createBacktraceCommand()
         self.gdbserver.send(cmd)
         self.observer.printBacktrace(cmd.getBacktrace())
+
+    def updateNewFileLocationListeners(self, newFile, newLine):
+        for listener in self.fileLocationListeners:
+            listener.newFileLocation(newFile, newLine)
 
     def finish(self):
         self.checkConnection();

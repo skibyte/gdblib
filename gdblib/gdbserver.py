@@ -25,9 +25,8 @@ from gdblib.completevisitor import CompleteVisitor;
 from gdblib.log import Logger
 
 class GDBServer(Thread):
-    def __init__(self,app,process):
+    def __init__(self,process):
         Thread.__init__(self)
-        self.app = app
         self.working = True
         self.cmdcondition = threading.Condition()
         self.process = process
@@ -36,10 +35,6 @@ class GDBServer(Thread):
         self.currentcmd = None
         self.log = Logger("GDBServer")
         self.completevisitor = CompleteVisitor()
-
-    def __del__(self):
-        if self.working:
-            self.stopserver()
 
     def run(self):
         while(self.working):

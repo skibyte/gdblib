@@ -45,6 +45,7 @@ class GDBInterpreter():
                     filename = matches.group(1)
                     fullname = matches.group(2) 
                     dictionary = {"file":filename, "fullname":fullname};
+                    #TODO: Check for other extensions
                     if (filename.endswith(".c") or filename.endswith(".cpp")):
                         files.append(dictionary)
 

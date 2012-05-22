@@ -21,8 +21,6 @@ from gdblib.commandfactory import CommandFactory
 from gdblib.cmd import *
 
 class CommandFactoryTestCase(unittest.TestCase):
-    factory = None
-
     def setUp(self):
         self.factory = CommandFactory()
 

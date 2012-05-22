@@ -27,7 +27,8 @@ class GDBTestCase(unittest.TestCase):
     def setUp(self):
         self.gdb = GDB()
         self.connectedGdb = GDB()
-        self.connectedGdb.connectApp('gdblib/testapplication/app','',None)
+        self.connectedGdb.connectApp('gdblib/testapplication/app','')
+        self.listener = Listener()
 
     def tearDown(self):
         self.connectedGdb.disconnect()
@@ -36,7 +37,7 @@ class GDBTestCase(unittest.TestCase):
         self.assertTrue(self.connectedGdb.state.isConnected())
 
     def testConnectApp_IncorrectPath(self):
-        self.assertRaises(IOError,self.gdb.connectApp, 'incorrectpath','',None);
+        self.assertRaises(IOError,self.gdb.connectApp, 'incorrectpath','');
 
     def testRun_NotConnectedException(self):
         self.assertRaises(NotConnectedError, self.gdb.run)
@@ -103,7 +104,6 @@ class GDBTestCase(unittest.TestCase):
 
     def testGetSourceCodeFiles(self):
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/'
-        #path = 'test/org/qdebug/gdb/testapplication/'
         file1 = 'main.c'
         file2 = 'module1/functions.c'
 
@@ -127,17 +127,37 @@ class GDBTestCase(unittest.TestCase):
     #def testNext(self):
         #""
 
+    def testAddNewFileLocationListener(self):
+        self.connectedGdb.addNewFileLocationListener(self.listener)
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,22)
+        self.connectedGdb.run()
+        self.assertEquals(path, self.listener.newFile())
+        self.assertEquals(22, self.listener.newLine())
+
+    def testAddStandardOutputListener(self):
+        pass
+        #self.connectedGdb.addStandardOutputListener(self.listener)
+        #self.connectedGdb.run()
+        #self.assertEquals('X:6\tY:7\nX:8\tY:9', self.listener.standardOutputReceived())
+
+    def testAddErrorListener(self):
+        pass
+
+    def testStandardInput(self):
+        pass
+
     def testAddBreakpoint(self):
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
-        self.connectedGdb.addBreakpoint(path,6)
+        self.connectedGdb.addBreakpoint(path,22)
         self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
         breakpoints = self.connectedGdb.getBreakpoints()
         self.assertEquals(1, breakpoints[0].getNumber())
         self.assertEquals('breakpoint', breakpoints[0].getType())
         self.assertEquals('main', breakpoints[0].getFunction())
         self.assertEquals('main.c', breakpoints[0].getSourceFile())
-        self.assertEquals(6, breakpoints[0].getLineNumber())
+        self.assertEquals(22, breakpoints[0].getLineNumber())
 
     def testAddBreakpoint_NoSourceFileError(self):
         self.assertRaises(NoSourceFileError, self.connectedGdb.addBreakpoint, 'incorrectfile', 6)
@@ -236,3 +256,20 @@ class GDBTestCase(unittest.TestCase):
 
     #def testInfoThreads(self):
         #self.fail('Not implemnted yet')
+
+class Listener():
+    def newFileLocation(self, newFileStr, newLineStr):
+        self.newFileStr = newFileStr
+        self.newLineStr = newLineStr
+
+    def standardOutput(self, output):
+        self.output = output
+
+    def newFile(self):
+        return self.newFileStr
+
+    def newLine(self):
+        return self.newLineStr
+    
+    def standardOutputReceived(self):
+        return self.output
