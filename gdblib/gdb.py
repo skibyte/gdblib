@@ -144,6 +144,13 @@ class GDB():
             self.log.debug("Reporting new location: " + location['fullname'] +":"+str(location['line']))
             self.updateNewFileLocationListeners(location['fullname'], location['line'])
 
+    def p(self, expression):
+        self.checkConnection()
+        cmd = self.factory.createPrintCommand(expression)
+        self.gdbserver.send(cmd)
+        value = cmd.getResult()
+        return value
+
     def backtrace(self):
         self.checkConnection();
         cmd = self.factory.createBacktraceCommand()

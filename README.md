@@ -15,7 +15,7 @@ Usage
         from gdblib import GDB
 
         gdb = GDB() 
-        gdb.connectApp('application', 'arguments')
+        gdb.connectApp('application', 'application arguments')
         gdb.addBreakpoint('main.c', 54)
         gdb.deleteBreakpoint('main.c', 54)
         breakpoints = gdb.getBreakpoins()

@@ -93,12 +93,22 @@ class BacktraceCommand(DefaultCommand):
         return self.backtrace
 
 class PrintCommand(DefaultCommand):
-    def getValue(self, variable):
-        return "print " + variable + "\n"
+    result = ''
+    def __init__(self, expression):
+        self.expression = expression
 
-class PrintXCommand(DefaultCommand):
-    def getValue(self, variable):
-        return "print " + variable + "\n"
+    def accept(self, visitor):
+        visitor.visitPrintCommand(self)
+
+    def setResult(self, result):
+        self.result = result
+
+    def getResult(self):
+        return self.result
+
+    def getValue(self):
+        return "print " + self.expression + "\n"
+
 
 class SetVarCommand(DefaultCommand):
     def __init__(self, variable, value):

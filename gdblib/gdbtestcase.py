@@ -121,6 +121,32 @@ class GDBTestCase(unittest.TestCase):
     def testRun(self):
         self.connectedGdb.run()
 
+    def testStep(self):
+        self.connectedGdb.addNewFileLocationListener(self.listener)
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,26)
+        self.connectedGdb.run()
+        self.connectedGdb.step()
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/module1/functions.c'
+        self.assertEquals(path, self.listener.newFile())
+        self.assertEquals(23, self.listener.newLine())
+
+    def testNext(self):
+        self.connectedGdb.addNewFileLocationListener(self.listener)
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,26)
+        self.connectedGdb.run()
+        self.connectedGdb.next()
+        self.assertEquals(path, self.listener.newFile())
+        self.assertEquals(27, self.listener.newLine())
+
+    def testPrint(self):
+        self.connectedGdb.addNewFileLocationListener(self.listener)
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,26)
+        self.connectedGdb.run()
+        self.assertEquals('$1 = 6', self.connectedGdb.p('mypoint.x'))
+
     def testAddNewFileLocationListener(self):
         self.connectedGdb.addNewFileLocationListener(self.listener)
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'

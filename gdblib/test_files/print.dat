@@ -1,0 +1,6 @@
+print mypoint.x
+&"print mypoint.x\n"
+~"$1 = 6"
+~"\n"
+^done
+

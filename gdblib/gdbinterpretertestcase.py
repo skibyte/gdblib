@@ -87,6 +87,14 @@ class GDBInterpreterTestCase(unittest.TestCase):
         self.assertEquals('/home/lobo/programming/projects/python/gdb_frontend/test/org/qdebug/gdb/testapplication/module1/functions.c',files[1]['fullname'])
 
     
+    def testParse_Print(self):
+        handle = open("gdblib/test_files/print.dat", "r")
+        filecontent = handle.readlines()
+        handle.close()
+        value = self.interpreter.parsePrintCommand(filecontent)
+        
+        self.assertEquals('$1 = 6', value)
+
     def testParse_Step_Next(self):
         handle = open("gdblib/test_files/next.dat", "r")
         content = handle.readlines()

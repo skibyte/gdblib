@@ -47,7 +47,10 @@ class CompleteVisitor():
 
     def visitDeleteBreakpointCommand(self, cmd):
         cmd.setCompleted(self.findstr('^done',1))
-        
+    
+    def visitPrintCommand(self, cmd):
+        cmd.setCompleted(self.findstr('^done',1))
+
     def findstr(self,string, number):
         found = 0
         for line in self.output:
