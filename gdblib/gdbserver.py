@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-import gdblib.gdb;
 from gdblib.gdbinterpreter import GDBInterpreter;
 from threading import Thread;
 import threading;

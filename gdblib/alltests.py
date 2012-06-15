@@ -18,48 +18,23 @@
 import unittest;
 import sys
 
-sys.path.append('src')
 
-from gdblib.gdbinterpretertestcase import GDBInterpreterTestCase;
-from gdblib.gdbtestcase import GDBTestCase
 from gdblib.gdbservertestcase import GDBServerTestCase
+from gdblib.gdbtestcase import GDBTestCase
+from gdblib.gdbinterpretertestcase import GDBInterpreterTestCase
+from gdblib.filewatchertestcase import FileWatcherTestCase
 from gdblib.utiltestcase import UtilTestCase
-from gdblib.breakpointtestcase import BreakpointTestCase;
-from gdblib.cmdtestcase import *
-from gdblib.commandfactorytestcase import *
-
+from gdblib.breakpointtestcase import BreakpointTestCase
 
 def main():
     loader = unittest.TestLoader()
 
     suite = unittest.TestSuite()
-    #suite.addTests(loader.loadTestsFromTestCase(GDBServerTestCase))
-   # suite.addTests(loader.loadTestsFromTestCase(GDBInterpreterTestCase))
+    suite.addTests(loader.loadTestsFromTestCase(GDBServerTestCase))
+    suite.addTests(loader.loadTestsFromTestCase(GDBInterpreterTestCase))
     suite.addTests(loader.loadTestsFromTestCase(GDBTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(UtilTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(BreakpointTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(DefaultCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(AddDirectoryCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(ChangeDirectoryCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(ListSourceFilesCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(AdvanceCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(NextCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(StepCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(RunCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(BacktraceCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(PrintCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(PrintXCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(SetVarCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(ReturnCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(ContinueCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(FinishCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(WhatIsCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(AddBreakpointCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(DeleteBreakpointCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(AddWatchPointCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(DeleteWatchpointCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(InfoBreakpointCommandTestCase))
-    #suite.addTests(loader.loadTestsFromTestCase(CommandFactoryTestCase))
+    suite.addTests(loader.loadTestsFromTestCase(UtilTestCase))
+    suite.addTests(loader.loadTestsFromTestCase(BreakpointTestCase))
     runner = unittest.TextTestRunner(verbosity=1)
     result = runner.run(suite)
 

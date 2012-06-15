@@ -17,7 +17,7 @@
 #
 import unittest;
 import os
-
+import time
 from gdblib.gdb import GDB
 from gdblib.exceptions import NotConnectedError
 from gdblib.exceptions import NoLineError
@@ -121,12 +121,6 @@ class GDBTestCase(unittest.TestCase):
     def testRun(self):
         self.connectedGdb.run()
 
-    #def testStep(self):    
-        #""
-    
-    #def testNext(self):
-        #""
-
     def testAddNewFileLocationListener(self):
         self.connectedGdb.addNewFileLocationListener(self.listener)
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
@@ -136,16 +130,10 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(22, self.listener.newLine())
 
     def testAddStandardOutputListener(self):
-        pass
-        #self.connectedGdb.addStandardOutputListener(self.listener)
-        #self.connectedGdb.run()
-        #self.assertEquals('X:6\tY:7\nX:8\tY:9', self.listener.standardOutputReceived())
-
-    def testAddErrorListener(self):
-        pass
-
-    def testStandardInput(self):
-        pass
+        self.connectedGdb.addStandardOutputListener(self.listener)
+        self.connectedGdb.run()
+        time.sleep(1)
+        self.assertEquals('X:6\tY:7\nX:8\tY:9\n', self.listener.standardOutputReceived())
 
     def testAddBreakpoint(self):
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
@@ -174,96 +162,15 @@ class GDBTestCase(unittest.TestCase):
         self.connectedGdb.deleteBreakpoint(breakpoints[0].getNumber())
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
     
-    #def testAddWatchPoint(self):
-        #pass
-    
-    #def testDeleteWatchpoint(self):
-        #path =  os.getcwd() + os.sep + 'test/org/qdebug/gdb/testapplication/main.c'
-        #self.gdb.addWatchpoint(path,6)
-        #self.assertEquals(1, self.gdb.getState().getNumberOfBreakpoints())
-        #brk = self.gdb.getState().getBreakpoint(0)
-        #self.gdb.deleteBreakpoint(brk.getNumber())
-        #self.assertEquals(0, self.gdb.getState().getNumberOfBreakpoints())
-
-    #def testAddReadWatchpoint(self):
-        #self.fail('Not implemnted yet')
-
-    #def testDeleteReadWatchpoint(self):
-        #self.fail('Not implemnted yet')
-
-    #def testDeleteAll(self):
-        #self.gdb.addBreakpoint();
-        #self.gdb.addBreakpoint();
-        #self.gdb.addBreakpoint();
-
-        #self.assertEquals(3, self.gdb.getState().getNumberOfBreakpoints())
-        #self.gdb.deleteAll();
-        #self.assertEquals(0, self.gdb.getState().getNumberOfBreakpoints())
-
-    #def testInfoWatchpoints(self):
-        #self.assertEquals(0, self.gdb.getState().getNumberOfWatchpoints())
-        #path =  os.getcwd() + os.sep + 'test/org/qdebug/gdb/testapplication/main.c'
-        #self.gdb.addWatchpoint(path,6)
-        #self.assertEquals(1, self.gdb.getState().getNumberOfWatchpoints())
-        #self.gdb.infoWatchpoints()
-        #watchpoint = self.gdb.getState().getWatchpoint(0)
-        #self.assertEquals(1, watchpoint.getNumber())
-        #self.assertEquals('breakpoint', watchpoint.getType())
-        #self.assertEquals('main', watchpoint.getFunction())
-        #self.assertEquals('main.c', watchpoint.getSourceFile())
-        #self.assertEquals(6, watchpoint.getLineNumber())
-
-    #def testEnable_DisableBreakpoint(self):
-        #self.gdb.addBreakpoint();
-        #brk = self.gdb.getState().getBreakpoint(0)
-        #self.assertEquals(True, brk.isEnabled())
-        #self.gdb.disableBreakpoint(brk.getNumber())
-        #brk = self.gdb.getState().getBreakpoint(0)
-        #self.assertEquals(False, brk.isEnabled())
-        #self.gdb.enableBreakpoint(brk.getNumber())
-        #brk = self.gdb.getState().getBreakpoint(0)
-        #self.assertEquals(True, brk.isEnabled())
-
-    #def testFinish(self):
-        #self.fail('Not implemnted yet')
-    
-    #def testUntil(self):
-        #self.fail('Not implemnted yet')
-
-    #def testBacktrace(self):
-        #self.fail('Not implemnted yet')
-    
-    #def testContinue(self):
-        #self.fail('Not implemnted yet')
-    
-    #def testPrint(self):
-        #self.fail('Not implemnted yet')
-    
-    #def testPrintX(self):
-        #self.fail('Not implemnted yet')
-
-    #def testWhatIs(self):
-        #self.fail('Not implemnted yet')
-
-    #def testJump(self):
-        #self.fail('Not implemnted yet')
-    
-    #def testCall(self):
-        #self.fail('Not implemnted yet')
-    
-    #def testReturn(self):
-        #self.fail('Not implemnted yet')
-
-    #def testInfoThreads(self):
-        #self.fail('Not implemnted yet')
 
 class Listener():
+    output = ''
     def newFileLocation(self, newFileStr, newLineStr):
         self.newFileStr = newFileStr
         self.newLineStr = newLineStr
 
-    def standardOutput(self, output):
-        self.output = output
+    def newContent(self, output):
+        self.output += output
 
     def newFile(self):
         return self.newFileStr

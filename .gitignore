@@ -1,4 +1,7 @@
 *.pyc
+gdblib/testapplication/app
+gdblib/testapplication/output.console
+.coverage
 build
 *.o
 tags

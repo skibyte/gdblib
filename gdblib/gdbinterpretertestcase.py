@@ -19,6 +19,7 @@ import unittest;
 from gdblib.gdbinterpreter import GDBInterpreter;
 from gdblib.exceptions import NoLineError;
 from gdblib.exceptions import NoSourceFileError;
+import os
 
 class GDBInterpreterTestCase(unittest.TestCase):
     def setUp(self):
@@ -72,12 +73,6 @@ class GDBInterpreterTestCase(unittest.TestCase):
         self._testBreak(breaks[0], 1, "breakpoint", "0x98ea1", "main", 169, "src/main.c")
         self._testBreak(breaks[1], 2, "breakpoint", "0x98e77", "main", 192, "src/main.c")
 
-    #def testParse_Until(self):
-        #"until"
-
-    #def testParse_Info_Watchpoints(self):
-        #"info watchpoints"
-       
     def testParse_ListSourceFiles(self):
         handle = open("gdblib/test_files/list_source_files.dat", "r")
         filecontent = handle.readlines()
@@ -91,8 +86,6 @@ class GDBInterpreterTestCase(unittest.TestCase):
         self.assertEquals('module1/functions.c',files[1]['file'])
         self.assertEquals('/home/lobo/programming/projects/python/gdb_frontend/test/org/qdebug/gdb/testapplication/module1/functions.c',files[1]['fullname'])
 
-    #def testParse_Info_Local(self):
-        #"info local"
     
     def testParse_Step_Next(self):
         handle = open("gdblib/test_files/next.dat", "r")
@@ -106,30 +99,5 @@ class GDBInterpreterTestCase(unittest.TestCase):
         self.assertEquals('/home/lobo/programming/projects/python/gdb_frontend/test/org/qdebug/gdb/testapplication/module1/functions.c', location['fullname'])
         self.assertEquals(13, location['line'])
         
-    #def testParse_Backtrace(self):
-        #"backtrace"
-
-
-    #def testParse_Clear(self):
-        #"clear"
-
-
-    #def testContinue(self):
-        #"continue"
-
-    #def testWhatIs(self):
-        #"whatis x"
-
-    #def testSetVar(self):
-        #"setvar " 
-
-    #def testJump(self):
-        #"jump"
-
-    #def testReturn(self):
-        #"return 2"
-
-    #def testPrint(self):
-        #"print x"
 if __name__ == '__main__':
     unittest.main()

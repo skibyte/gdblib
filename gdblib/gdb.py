@@ -18,6 +18,7 @@
 from gdblib.commandfactory import CommandFactory;
 from gdblib.gdbserver import GDBServer;
 from gdblib.gdbstate import GDBState;
+from gdblib.filewatcher import FileWatcher;
 from gdblib.log import Logger
 from gdblib.exceptions import NotConnectedError
 
@@ -34,19 +35,18 @@ class GDB():
         self.factory = CommandFactory()
         self.state = GDBState()
         self.fileLocationListeners = []
-        self.standardOutputListeners = []
 
     def connectApp(self, apppath,apparguments):
         self.apppath = apppath
         self.apparguments = apparguments
         arguments = ['gdb','-i','mi','-q',self.apppath]
         self.connect(arguments)
+        self.fileWatcher = FileWatcher(self.apppath[0:self.apppath.rfind('/')]+ '/output.console')
     
     def connectCore(self,apppath,corepath):
         self.apppath = apppath
-        arguments = ['gdb','-i','mi','-q',self.apppath, corepath]
+        arguments = ['gdb','-i','mi','-q', self.apppath, corepath]
         self.connect(arguments)
-
 
     def connect(self,arguments):
     
@@ -64,7 +64,7 @@ class GDB():
         self.fileLocationListeners.append(listener)
 
     def addStandardOutputListener(self, listener):
-        self.standardOutputListeners.append(listener)
+        self.fileWatcher.addContentListener(listener)
 
     def changeDirectory(self,directory):
         self.checkConnection();
@@ -117,8 +117,8 @@ class GDB():
             raise NotConnectedError("GDB must be connected before using this method");
 
     def run(self):
-        self.checkConnection();
-
+        self.checkConnection()
+        self.fileWatcher.start()
         cmd = self.factory.createRunCommand(self.apparguments)
         self.gdbserver.send(cmd)
         location = cmd.getLocation()
@@ -189,6 +189,7 @@ class GDB():
         self.checkConnection();
         self.gdbserver.stopserver()
         self.state.setConnected(False)
+        self.fileWatcher.stopWatching()
         #self.monitor.destroy()
 
     def isConnected(self):
