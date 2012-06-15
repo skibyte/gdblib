@@ -87,7 +87,11 @@ class GDBInterpreter():
     def parsePrintCommand(self, gdboutputlines):
         for line in gdboutputlines:
             matches = re.match(r'~\"(\$\d+\s=.*)\"',line)
-            if(matches):
+            if matches:
+                return matches.group(1)
+
+            matches = re.match(r'&\"(No symbol.* in current context.*)\"',line)
+            if matches:
                 return matches.group(1)
 
     def parse(self,cmd, output):

@@ -50,6 +50,8 @@ class CompleteVisitor():
     
     def visitPrintCommand(self, cmd):
         cmd.setCompleted(self.findstr('^done',1))
+        if not cmd.isComplete():
+            cmd.setCompleted(self.findstr('^error',1))
 
     def findstr(self,string, number):
         found = 0

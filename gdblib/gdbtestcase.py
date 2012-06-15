@@ -147,6 +147,14 @@ class GDBTestCase(unittest.TestCase):
         self.connectedGdb.run()
         self.assertEquals('$1 = 6', self.connectedGdb.p('mypoint.x'))
 
+    def testPrint_Incorrect(self):
+        self.connectedGdb.addNewFileLocationListener(self.listener)
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,26)
+        self.connectedGdb.run()
+        self.assertEquals('No symbol \\\"e\\\" in current context.\\n', \
+                self.connectedGdb.p('e'))
+
     def testAddNewFileLocationListener(self):
         self.connectedGdb.addNewFileLocationListener(self.listener)
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
