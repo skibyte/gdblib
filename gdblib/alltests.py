@@ -22,7 +22,6 @@ import sys
 from gdblib.gdbservertestcase import GDBServerTestCase
 from gdblib.gdbtestcase import GDBTestCase
 from gdblib.gdbinterpretertestcase import GDBInterpreterTestCase
-from gdblib.filewatchertestcase import FileWatcherTestCase
 from gdblib.utiltestcase import UtilTestCase
 from gdblib.breakpointtestcase import BreakpointTestCase
 
