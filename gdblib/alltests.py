@@ -38,6 +38,7 @@ def main():
     suite.addTests(loader.loadTestsFromTestCase(BreakpointTestCase))
     runner = unittest.TextTestRunner(verbosity=1)
     result = runner.run(suite)
+    return len(result.errors) + len(result.failures)
 
 if __name__ == '__main__':
     sys.exit(main())

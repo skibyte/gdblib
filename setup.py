@@ -33,7 +33,7 @@ class TestCommand (Command):
 
     def run(self):
         subprocess.call(["make", "-C","gdblib/testapplication"])
-        alltests.main()
+        sys.exit(alltests.main())
 
 class CoverageCommand (Command):
     description = "coverage task"
