@@ -29,8 +29,7 @@ class GDBTestCase(unittest.TestCase):
         self.connectedGdb = GDB()
         try:
             self.connectedGdb.connectApp('gdblib/testapplication/app','')
-        except IOError as e:
-            print e
+        except :
             self.tearDown()
 
         self.listener = Listener()
