@@ -1,7 +1,8 @@
 # Gdblib Installation instructions
 
 ## Software requirements
-* Gdb 7
+* For the moment I have only tested gdblib in Linux 3.4.2
+* Gdb 7.4, but any gdb with MI interface should work
 * Python 2.4
 * Gnu Make for testing purposes
 * Python coverage for coverage purposes http://nedbatchelder.com/code/coverage/
