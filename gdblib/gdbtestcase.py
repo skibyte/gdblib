@@ -215,11 +215,19 @@ class GDBTestCase(unittest.TestCase):
         breakpoints = self.connectedGdb.getBreakpoints()
         self.connectedGdb.deleteAllBreakpoints()
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
+    
+    def testContinueExecution(self):
+        self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,22)
+        self.connectedGdb.run()
+        self.connectedGdb.continueExecution()
 
 
 class Listener():
     output = ''
     eventCounter = 0
+    exitCounter = 0
 
     def newFileLocation(self, newFileStr, newLineStr):
         self.newFileStr = newFileStr
@@ -240,3 +248,6 @@ class Listener():
 
     def standardOutputReceived(self):
         return self.output
+
+    def exitCount(self):
+        return self.exitCounter

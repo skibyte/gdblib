@@ -25,6 +25,8 @@ class CompleteVisitor():
     def visitDefaultCommand(self,cmd):
         string = '&"' + cmd.getValue().replace('\n', '\\n') +'"'
         cmd.setCompleted(self.findstr(string, 1))
+        if not cmd.isComplete():
+            cmd.setCompleted(self.findstr('(gdb)',1))
 
     def visitAdvanceCommand(self,cmd):
         cmd.setCompleted(self.findstr('(gdb)',2))

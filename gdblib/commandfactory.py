@@ -36,6 +36,9 @@ class CommandFactory():
     def createPrintCommand(self, expression):
         return PrintCommand(expression)
 
+    def createContinueCommand(self):
+        return ContinueCommand()
+
     def createAddBreakpointCommand(self, filename, line):
         return AddBreakpointCommand(filename, line)
 

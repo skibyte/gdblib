@@ -67,6 +67,9 @@ class GDB():
     def addStandardOutputListener(self, listener):
         self.fileWatcher.addContentListener(listener)
 
+    def addExitListener(self, listener):
+        self.exitListeners.append(listener)
+
     def changeDirectory(self,directory):
         self.checkConnection();
         cmd = self.factory.createChangeDirectoryCommand(directory)
@@ -176,6 +179,8 @@ class GDB():
        
     def continueExecution(self):
         self.checkConnection();
+        cmd = self.factory.createContinueCommand()
+        self.gdbserver.send(cmd)
 
 
     def whatIs(self,variable):
