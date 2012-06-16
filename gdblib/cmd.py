@@ -15,16 +15,28 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from gdblib.log import Logger
 class DefaultCommand():
     completed = False
+    log = Logger("DefaultCommand")
+
     def accept(self,visitor):
         visitor.visitDefaultCommand(self)
 
     def setCompleted(self,value):
         self.completed = value
+        if self.completed == True:
+            self.log.info("Command completed: " + str(self.getValue()))
 
     def isComplete(self):
         return self.completed
+
+    def getValue(self):
+        return ''
+
+class QuitCommand(DefaultCommand):
+    def getValue(self):
+        return 'quit\n'
 
 class AddDirectoryCommand(DefaultCommand):
     def __init__(self, directory):
@@ -58,6 +70,7 @@ class ListSourceFilesCommand(DefaultCommand):
 
     def accept(self,visitor):
         visitor.visitListSourceFilesCmd(self)
+
 
 class AdvanceCommand(DefaultCommand):
     def accept(self,visitor):

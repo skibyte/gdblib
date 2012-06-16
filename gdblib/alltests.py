@@ -24,12 +24,14 @@ from gdblib.gdbtestcase import GDBTestCase
 from gdblib.gdbinterpretertestcase import GDBInterpreterTestCase
 from gdblib.utiltestcase import UtilTestCase
 from gdblib.breakpointtestcase import BreakpointTestCase
+from gdblib.completevisitortestcase import *
 
 def main():
     loader = unittest.TestLoader()
 
     suite = unittest.TestSuite()
     suite.addTests(loader.loadTestsFromTestCase(GDBServerTestCase))
+    suite.addTests(loader.loadTestsFromTestCase(CompleteVisitorTestCase))
     suite.addTests(loader.loadTestsFromTestCase(GDBInterpreterTestCase))
     suite.addTests(loader.loadTestsFromTestCase(GDBTestCase))
     suite.addTests(loader.loadTestsFromTestCase(UtilTestCase))

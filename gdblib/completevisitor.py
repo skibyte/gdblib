@@ -23,10 +23,8 @@ class CompleteVisitor():
         cmd.setCompleted(self.findstr('(gdb)',1))
 
     def visitDefaultCommand(self,cmd):
-        for line in self.output:
-            if line.find('done') or line.find('error'):
-                cmd.setCompleted(True)
-                return
+        string = '&"' + cmd.getValue().replace('\n', '\\n') +'"'
+        cmd.setCompleted(self.findstr(string, 1))
 
     def visitAdvanceCommand(self,cmd):
         cmd.setCompleted(self.findstr('(gdb)',2))
@@ -40,28 +38,24 @@ class CompleteVisitor():
         cmd.setCompleted(self.findstr('^done',1))
 
     def visitAddBreakpointCommand(self,cmd):
-        cmd.setCompleted(self.findstr('^done',1))
+        cmd.setCompleted(self.findstr('(gdb)',1))
 
     def visitInfoBreakpointCommand(self,cmd):
-        cmd.setCompleted(self.findstr('^done',1))
+        cmd.setCompleted(self.findstr('(gdb)',1))
 
     def visitDeleteBreakpointCommand(self, cmd):
-        cmd.setCompleted(self.findstr('^done',1))
+        cmd.setCompleted(self.findstr('(gdb)',1))
     
     def visitPrintCommand(self, cmd):
-        cmd.setCompleted(self.findstr('^done',1))
+        cmd.setCompleted(self.findstr('(gdb)',1))
         if not cmd.isComplete():
             cmd.setCompleted(self.findstr('^error',1))
 
     def findstr(self,string, number):
-        found = 0
-        for line in self.output:
-            if line.find(string) != -1:
-                found += 1
-                if found == number:
-                    return True
+        if self.output.count(string) == number:
+            return True
         
         return False
                 
     def visitListSourceFilesCmd(self,cmd):
-        cmd.setCompleted(self.findstr('^done',2))
+        cmd.setCompleted(self.findstr('(gdb)',2))

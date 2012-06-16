@@ -40,8 +40,9 @@ class GDB():
         self.apppath = apppath
         self.apparguments = apparguments
         arguments = ['gdb','-i','mi','-q',self.apppath]
-        self.connect(arguments)
         self.fileWatcher = FileWatcher(self.apppath[0:self.apppath.rfind('/')]+ '/output.console')
+        self.connect(arguments)
+        self.fileWatcher.start()
     
     def connectCore(self,apppath,corepath):
         self.apppath = apppath
@@ -80,7 +81,6 @@ class GDB():
         cmd = self.factory.createInfoSourceCommand()
         self.gdbserver.send(cmd)
         return cmd.getSourceFiles()
-
 
     def addBreakpoint(self, filename, line):
         self.checkConnection();
@@ -123,7 +123,6 @@ class GDB():
 
     def run(self):
         self.checkConnection()
-        self.fileWatcher.start()
         cmd = self.factory.createRunCommand(self.apparguments)
         self.gdbserver.send(cmd)
         location = cmd.getLocation()

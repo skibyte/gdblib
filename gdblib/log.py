@@ -17,6 +17,7 @@
 #
 #                                                                                                                              
 import logging
+
 class Logger:
     enabled = False
     level = logging.DEBUG
