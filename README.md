@@ -2,6 +2,8 @@ Gdb lib
 =======
 Gdb lib is a python library aimed to work as a simple interface for gdb.
 
+[![Build Status](https://secure.travis-ci.org/skibyte/gdblib.png)](http://travis-ci.org/skibyte/gdblib)
+
 Contact
 -------
 **Author:** Fernando Castillo skibyte@gmail.com
