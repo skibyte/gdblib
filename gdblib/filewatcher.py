@@ -48,7 +48,8 @@ class FileWatcher(Thread):
 
             time.sleep(0.5)    
         try :
-            f.close()
+            if f != None:
+                f.close()
         except IOError as e:
             pass
 

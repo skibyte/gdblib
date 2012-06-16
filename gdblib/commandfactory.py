@@ -41,6 +41,9 @@ class CommandFactory():
 
     def createDeleteBreakpointCommand(self, number):
         return DeleteBreakpointCommand(number)
+    
+    def createDeleteAllBreakpointsCommand(self):
+        return DeleteAllBreakpointsCommand()
 
     def createAddWatchPointCommand(self):
         return AddWatchpointCommand()

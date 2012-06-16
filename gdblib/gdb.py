@@ -94,8 +94,13 @@ class GDB():
         return cmd.getBreakpoints()
 
     def deleteBreakpoint(self, number):    
-        self.checkConnection();
+        self.checkConnection()
         cmd = self.factory.createDeleteBreakpointCommand(number)
+        self.gdbserver.send(cmd)
+
+    def deleteAllBreakpoints(self):
+        self.checkConnection()
+        cmd = self.factory.createDeleteAllBreakpointsCommand()
         self.gdbserver.send(cmd)
 
     def addWatchpoint(self):

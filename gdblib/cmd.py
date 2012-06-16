@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 class DefaultCommand():
+    completed = False
     def accept(self,visitor):
         visitor.visitDefaultCommand(self)
 
@@ -165,6 +166,11 @@ class DeleteBreakpointCommand(DefaultCommand):
 
     def accept(self,visitor):
         visitor.visitDeleteBreakpointCommand(self)
+
+class DeleteAllBreakpointsCommand(DefaultCommand):
+    def getValue(self):
+            return 'delete breakpoints\n'
+
 
 class AddWatchpointCommand(DefaultCommand):
     def __init__(self):
