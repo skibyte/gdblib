@@ -3,7 +3,7 @@
 ## Software requirements
 * For the moment I have only tested gdblib in Linux 3.4.2
 * Gdb 7.4, but any gdb with MI interface should work
-* Python 2.4
+* Python 2.6
 * Gnu Make for testing purposes
 * Python coverage for coverage purposes http://nedbatchelder.com/code/coverage/
 
