@@ -24,7 +24,7 @@ from gdblib.gdbserver import GDBServer
 
 class GDBServerTestCase(unittest.TestCase):
     def setUp(self):
-        self.apppath = os.getcwd() + '/gdblib/testapplication/app'
+        self.apppath = 'gdblib/testapplication/app'
         self.arguments = ['gdb','-i','mi','-q',self.apppath, '']
         self.process = subprocess.Popen(self.arguments,
                 shell=False,stdin=subprocess.PIPE,

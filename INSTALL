@@ -1,0 +1,25 @@
+# Gdblib Installation instructions
+
+## Software requirements
+* For the moment I have only tested gdblib in Linux 3.4.2
+* Gdb 7.4, but any gdb with MI interface should work
+* Python 2.6
+* Gnu Make for testing purposes
+* Python coverage for coverage purposes http://nedbatchelder.com/code/coverage/
+
+### The following instructions are supposed to be executed in the gdblib parent source code folder
+
+## Howto build gdblib
+python2 setup.py build
+
+## Howto install gdblib
+python2 setup.py install 
+
+## Howto install in a specific location
+python2 setup.py install --prefix=/usr
+
+## Howto test gdblib
+python2 setup.py test
+
+## Howto generate test coverage
+python2 setup.py coverage

@@ -29,7 +29,7 @@ class GDBTestCase(unittest.TestCase):
         self.connectedGdb = GDB()
         try:
             self.connectedGdb.connectApp('gdblib/testapplication/app','')
-        except:
+        except :
             self.tearDown()
 
         self.listener = Listener()
