@@ -16,6 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 from gdblib.gdbinterpreter import GDBInterpreter;
+from gdblib.exceptions import CommandNotCompletedException
+from gdblib.cmd import QuitCommand
 from threading import Thread;
 import threading;
 import subprocess;
@@ -28,6 +30,7 @@ class GDBServer(Thread):
         Thread.__init__(self)
         self.working = True
         self.cmdcondition = threading.Condition()
+        self.cmdSingle = threading.Condition()
         self.process = process
         self.interpreter = GDBInterpreter()
         self.output = ''
@@ -36,37 +39,43 @@ class GDBServer(Thread):
         self.completevisitor = CompleteVisitor()
 
     def run(self):
+        lineCondition = threading.Condition()
         while(self.working):
             line = self.process.stdout.readline()
             self.log.debug(line)
             self.output += line
-            if(self.currentcmd != None):
-                self.completevisitor.setoutput(self.output.split('\n'))
+            if(self.currentcmd != None and not self.currentcmd.isComplete()):
+                self.completevisitor.setoutput(self.output)
                 self.currentcmd.accept(self.completevisitor)
 
-            if self.currentcmd == None or self.currentcmd.isComplete():
+            if self.currentcmd != None and self.currentcmd.isComplete():
                 self.cmdcondition.acquire()
                 self.cmdcondition.notify()
                 self.cmdcondition.release()
     
     def send(self,cmd):
-        self.cmdcondition.acquire()
+        self.cmdSingle.acquire()
         self.output = ''
         self.currentcmd = cmd
-        self.log.debug("Write -> " + str(cmd.getValue()))
+        self.log.info("Write -> " + str(cmd.getValue()))
+        self.cmdcondition.acquire()
         self.process.stdin.write(cmd.getValue())
-        
-        self.cmdcondition.wait()
+        self.cmdcondition.wait(5)
+
         try:
-            self.interpreter.parse(cmd,self.output.split('\n')) 
+            if self.currentcmd.isComplete() == False:
+                raise CommandNotCompletedException('The command ' + cmd.getValue() + ' could not be completed')
+
+            self.interpreter.parse(self.currentcmd,self.output.split('\n')) 
         finally:
             self.cmdcondition.release()
-
+            self.cmdSingle.release()
 
 
     # FIXME: Start gdb without confirmation questions
     def stopserver(self):
+        self.send(QuitCommand())
         self.working = False
-        self.process.stdin.write("quit\n")
+        self.currentcmd = None
         
         

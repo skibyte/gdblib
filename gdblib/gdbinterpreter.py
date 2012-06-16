@@ -84,6 +84,16 @@ class GDBInterpreter():
                 dictionary['line'] = int(matches.group(4))
         return dictionary    
 
+    def parsePrintCommand(self, gdboutputlines):
+        for line in gdboutputlines:
+            matches = re.match(r'~\"(\$\d+\s=.*)\"',line)
+            if matches:
+                return matches.group(1)
+
+            matches = re.match(r'&\"(No symbol.* in current context.*)\"',line)
+            if matches:
+                return matches.group(1)
+
     def parse(self,cmd, output):
         self.output = output
         cmd.accept(self)
@@ -114,3 +124,6 @@ class GDBInterpreter():
     def visitInfoBreakpointCommand(self,cmd):
         breakpoints = self.parseInfoBreak(self.output)
         cmd.setBreakpoints(breakpoints)
+
+    def visitPrintCommand(self, cmd):
+        cmd.setResult(self.parsePrintCommand(self.output))

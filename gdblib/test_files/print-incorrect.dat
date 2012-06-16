@@ -1,0 +1,5 @@
+&"print e.4\n"
+&"No symbol \"e\" in current context.\n"
+^error,msg="No symbol \"e\" in current context."
+(gdb) 
+

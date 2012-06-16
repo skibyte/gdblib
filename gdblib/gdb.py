@@ -40,8 +40,9 @@ class GDB():
         self.apppath = apppath
         self.apparguments = apparguments
         arguments = ['gdb','-i','mi','-q',self.apppath]
-        self.connect(arguments)
         self.fileWatcher = FileWatcher(self.apppath[0:self.apppath.rfind('/')]+ '/output.console')
+        self.connect(arguments)
+        self.fileWatcher.start()
     
     def connectCore(self,apppath,corepath):
         self.apppath = apppath
@@ -66,6 +67,9 @@ class GDB():
     def addStandardOutputListener(self, listener):
         self.fileWatcher.addContentListener(listener)
 
+    def addExitListener(self, listener):
+        self.exitListeners.append(listener)
+
     def changeDirectory(self,directory):
         self.checkConnection();
         cmd = self.factory.createChangeDirectoryCommand(directory)
@@ -81,7 +85,6 @@ class GDB():
         self.gdbserver.send(cmd)
         return cmd.getSourceFiles()
 
-
     def addBreakpoint(self, filename, line):
         self.checkConnection();
         cmd = self.factory.createAddBreakpointCommand(filename,line)
@@ -94,8 +97,13 @@ class GDB():
         return cmd.getBreakpoints()
 
     def deleteBreakpoint(self, number):    
-        self.checkConnection();
+        self.checkConnection()
         cmd = self.factory.createDeleteBreakpointCommand(number)
+        self.gdbserver.send(cmd)
+
+    def deleteAllBreakpoints(self):
+        self.checkConnection()
+        cmd = self.factory.createDeleteAllBreakpointsCommand()
         self.gdbserver.send(cmd)
 
     def addWatchpoint(self):
@@ -118,7 +126,6 @@ class GDB():
 
     def run(self):
         self.checkConnection()
-        self.fileWatcher.start()
         cmd = self.factory.createRunCommand(self.apparguments)
         self.gdbserver.send(cmd)
         location = cmd.getLocation()
@@ -144,6 +151,13 @@ class GDB():
             self.log.debug("Reporting new location: " + location['fullname'] +":"+str(location['line']))
             self.updateNewFileLocationListeners(location['fullname'], location['line'])
 
+    def p(self, expression):
+        self.checkConnection()
+        cmd = self.factory.createPrintCommand(expression)
+        self.gdbserver.send(cmd)
+        value = cmd.getResult()
+        return value
+
     def backtrace(self):
         self.checkConnection();
         cmd = self.factory.createBacktraceCommand()
@@ -165,6 +179,8 @@ class GDB():
        
     def continueExecution(self):
         self.checkConnection();
+        cmd = self.factory.createContinueCommand()
+        self.gdbserver.send(cmd)
 
 
     def whatIs(self,variable):

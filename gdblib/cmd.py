@@ -15,15 +15,28 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from gdblib.log import Logger
 class DefaultCommand():
+    completed = False
+    log = Logger("DefaultCommand")
+
     def accept(self,visitor):
         visitor.visitDefaultCommand(self)
 
     def setCompleted(self,value):
         self.completed = value
+        if self.completed == True:
+            self.log.info("Command completed: " + str(self.getValue()))
 
     def isComplete(self):
         return self.completed
+
+    def getValue(self):
+        return ''
+
+class QuitCommand(DefaultCommand):
+    def getValue(self):
+        return 'quit\n'
 
 class AddDirectoryCommand(DefaultCommand):
     def __init__(self, directory):
@@ -57,6 +70,7 @@ class ListSourceFilesCommand(DefaultCommand):
 
     def accept(self,visitor):
         visitor.visitListSourceFilesCmd(self)
+
 
 class AdvanceCommand(DefaultCommand):
     def accept(self,visitor):
@@ -93,12 +107,22 @@ class BacktraceCommand(DefaultCommand):
         return self.backtrace
 
 class PrintCommand(DefaultCommand):
-    def getValue(self, variable):
-        return "print " + variable + "\n"
+    result = ''
+    def __init__(self, expression):
+        self.expression = expression
 
-class PrintXCommand(DefaultCommand):
-    def getValue(self, variable):
-        return "print " + variable + "\n"
+    def accept(self, visitor):
+        visitor.visitPrintCommand(self)
+
+    def setResult(self, result):
+        self.result = result
+
+    def getResult(self):
+        return self.result
+
+    def getValue(self):
+        return "print " + self.expression + "\n"
+
 
 class SetVarCommand(DefaultCommand):
     def __init__(self, variable, value):
@@ -155,6 +179,11 @@ class DeleteBreakpointCommand(DefaultCommand):
 
     def accept(self,visitor):
         visitor.visitDeleteBreakpointCommand(self)
+
+class DeleteAllBreakpointsCommand(DefaultCommand):
+    def getValue(self):
+            return 'delete breakpoints\n'
+
 
 class AddWatchpointCommand(DefaultCommand):
     def __init__(self):

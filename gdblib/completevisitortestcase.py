@@ -1,6 +1,6 @@
 #
 # GdbLib - A Gdb python library.
-# Copyright (C) 2012 Fernando Castillo
+# Copyright (C) 2012  Fernando Castillo
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -15,25 +15,17 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 import unittest
-import subprocess;
-import os
-import time
-from gdblib.gdbserver import GDBServer
 
-class GDBServerTestCase(unittest.TestCase):
+from gdblib.completevisitor import *
+from gdblib.cmd import *
+
+class CompleteVisitorTestCase(unittest.TestCase):
     def setUp(self):
-        self.apppath = os.getcwd() + '/gdblib/testapplication/app'
-        self.arguments = ['gdb','-i','mi','-q',self.apppath, '']
-        self.process = subprocess.Popen(self.arguments,
-                shell=False,stdin=subprocess.PIPE,
-                stdout = subprocess.PIPE)
-        self.server = GDBServer(self.process)
+        self.visitor = CompleteVisitor()
 
-    def tearDown(self):
-        self.server.stopserver()
-
-    def testStart(self):
-        self.server.start()
-        time.sleep(2)
+    def testVisitDefaultCommand_Quit(self):
+        quit = QuitCommand()
+        self.visitor.setoutput('&"quit\\n"')
+        self.visitor.visitDefaultCommand(quit)
+        self.assertEquals(True, quit.isComplete(), 'Quit command not completed')

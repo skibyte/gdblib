@@ -25,3 +25,6 @@ class FunctionNotDefinedError(Exception):
 
 class NoLineError(Exception):
     pass
+
+class CommandNotCompletedException(Exception):
+    pass

@@ -27,7 +27,11 @@ class GDBTestCase(unittest.TestCase):
     def setUp(self):
         self.gdb = GDB()
         self.connectedGdb = GDB()
-        self.connectedGdb.connectApp('gdblib/testapplication/app','')
+        try:
+            self.connectedGdb.connectApp('gdblib/testapplication/app','')
+        except:
+            self.tearDown()
+
         self.listener = Listener()
 
     def tearDown(self):
@@ -121,6 +125,46 @@ class GDBTestCase(unittest.TestCase):
     def testRun(self):
         self.connectedGdb.run()
 
+    def testRun_Twice(self):
+        self.connectedGdb.run()
+        self.connectedGdb.run()
+
+    def testStep(self):
+        self.connectedGdb.addNewFileLocationListener(self.listener)
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,26)
+        self.connectedGdb.run()
+        self.connectedGdb.step()
+        self.assertEquals(2, self.listener.newFileLocationCounter())
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/module1/functions.c'
+        self.assertEquals(path, self.listener.newFile())
+        self.assertEquals(23, self.listener.newLine())
+
+    def testNext(self):
+        self.connectedGdb.addNewFileLocationListener(self.listener)
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,26)
+        self.connectedGdb.run()
+        self.connectedGdb.next()
+        self.assertEquals(2, self.listener.newFileLocationCounter())
+        self.assertEquals(path, self.listener.newFile())
+        self.assertEquals(27, self.listener.newLine())
+
+    def testPrint(self):
+        self.connectedGdb.addNewFileLocationListener(self.listener)
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,26)
+        self.connectedGdb.run()
+        self.assertEquals('$1 = 6', self.connectedGdb.p('mypoint.x'))
+
+    def testPrint_Incorrect(self):
+        self.connectedGdb.addNewFileLocationListener(self.listener)
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,26)
+        self.connectedGdb.run()
+        self.assertEquals('No symbol \\\"e\\\" in current context.\\n', \
+                self.connectedGdb.p('e'))
+
     def testAddNewFileLocationListener(self):
         self.connectedGdb.addNewFileLocationListener(self.listener)
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
@@ -139,6 +183,7 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
         self.connectedGdb.addBreakpoint(path,22)
+        time.sleep(1)
         self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
         breakpoints = self.connectedGdb.getBreakpoints()
         self.assertEquals(1, breakpoints[0].getNumber())
@@ -161,13 +206,33 @@ class GDBTestCase(unittest.TestCase):
         breakpoints = self.connectedGdb.getBreakpoints()
         self.connectedGdb.deleteBreakpoint(breakpoints[0].getNumber())
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
+   
+    def testDeleteAllBreakpoints(self):
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,6)
+        self.connectedGdb.addBreakpoint(path,7)
+        self.assertEquals(2, len(self.connectedGdb.getBreakpoints()))
+        breakpoints = self.connectedGdb.getBreakpoints()
+        self.connectedGdb.deleteAllBreakpoints()
+        self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
     
+    def testContinueExecution(self):
+        self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,22)
+        self.connectedGdb.run()
+        self.connectedGdb.continueExecution()
+
 
 class Listener():
     output = ''
+    eventCounter = 0
+    exitCounter = 0
+
     def newFileLocation(self, newFileStr, newLineStr):
         self.newFileStr = newFileStr
         self.newLineStr = newLineStr
+        self.eventCounter += 1
 
     def newContent(self, output):
         self.output += output
@@ -177,6 +242,12 @@ class Listener():
 
     def newLine(self):
         return self.newLineStr
-    
+
+    def newFileLocationCounter(self):
+        return self.eventCounter
+
     def standardOutputReceived(self):
         return self.output
+
+    def exitCount(self):
+        return self.exitCounter

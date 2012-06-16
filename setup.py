@@ -18,6 +18,7 @@
 from distutils.core import setup, Command
 import os
 import sys
+import subprocess
 from gdblib import alltests
 
 class TestCommand (Command):
@@ -31,6 +32,7 @@ class TestCommand (Command):
         pass
 
     def run(self):
+        subprocess.call(["make", "-C","gdblib/testapplication"])
         alltests.main()
 
 class CoverageCommand (Command):
@@ -47,6 +49,7 @@ class CoverageCommand (Command):
         from coverage import coverage
         cov = coverage()
         cov.start()
+        subprocess.call(["make", "-C","gdblib/testapplication"])
         alltests.main()
         cov.stop()
         cov.html_report(directory='build/covhtml')
