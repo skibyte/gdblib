@@ -1,0 +1,24 @@
+# Gdblib Installation instructions
+
+## Software requirements
+* Gdb 7
+* Python 2.4
+* Gnu Make for testing purposes
+* Python coverage for coverage purposes http://nedbatchelder.com/code/coverage/
+
+### The following instructions are supposed to be executed in the gdblib parent source code folder
+
+## Howto build gdblib
+python2 setup.py build
+
+## Howto install gdblib
+python2 setup.py install 
+
+## Howto install in a specific location
+python2 setup.py install --prefix=/usr
+
+## Howto test gdblib
+python2 setup.py test
+
+## Howto generate test coverage
+python2 setup.py coverage
