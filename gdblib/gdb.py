@@ -94,7 +94,17 @@ class GDB():
         self.checkConnection();
         cmd  = self.factory.createInfoBreakpointCommand()
         self.gdbserver.send(cmd)
-        return cmd.getBreakpoints()
+        breakpoints = cmd.getBreakpoints()
+
+        files = self.getSourceCodeFiles()
+
+        for b in breakpoints:
+            for f in files:
+                if b.getSourceFile() == f['file']:
+                    b.setSourceFile(f['fullname'])
+                    return breakpoints
+        
+        return breakpoints
 
     def deleteBreakpoint(self, number):    
         self.checkConnection()
