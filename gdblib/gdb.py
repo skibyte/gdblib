@@ -20,7 +20,7 @@ from gdblib.gdbserver import GDBServer;
 from gdblib.gdbstate import GDBState;
 from gdblib.filewatcher import FileWatcher;
 from gdblib.log import Logger
-from gdblib.exceptions import NotConnectedError
+from gdblib.exceptions import *
 
 import subprocess;
 import time;
@@ -37,6 +37,9 @@ class GDB():
         self.fileLocationListeners = []
 
     def connectApp(self, apppath,apparguments):
+        if self.isConnected() == True:
+            raise AlreadyConnectedError()
+
         self.apppath = apppath
         self.apparguments = apparguments
         arguments = ['gdb','-i','mi','-q',self.apppath]
@@ -45,12 +48,15 @@ class GDB():
         self.fileWatcher.start()
     
     def connectCore(self,apppath,corepath):
+        if self.isConnected() == True:
+            raise AlreadyConnectedError()
         self.apppath = apppath
         arguments = ['gdb','-i','mi','-q', self.apppath, corepath]
         self.connect(arguments)
 
     def connect(self,arguments):
-    
+        if self.isConnected() == True:
+            raise AlreadyConnectedError()
         handle = open(self.apppath);
         handle.close();
         self.process = subprocess.Popen(arguments,
@@ -94,7 +100,16 @@ class GDB():
         self.checkConnection();
         cmd  = self.factory.createInfoBreakpointCommand()
         self.gdbserver.send(cmd)
-        return cmd.getBreakpoints()
+        breakpoints = cmd.getBreakpoints()
+
+        files = self.getSourceCodeFiles()
+
+        for b in breakpoints:
+            for f in files:
+                if b.getSourceFile() == f['file']:
+                    b.setSourceFile(f['fullname'])
+        
+        return breakpoints
 
     def deleteBreakpoint(self, number):    
         self.checkConnection()
@@ -121,7 +136,7 @@ class GDB():
         self.gdbserver.send(cmd)
 
     def checkConnection(self):
-        if not self.state.isConnected():
+        if not self.isConnected():
             raise NotConnectedError("GDB must be connected before using this method");
 
     def run(self):
@@ -174,8 +189,11 @@ class GDB():
     def until(self):
         self.checkConnection();
 
-    def clear(self):
+    def clear(self, filename, lineNumber):
         self.checkConnection();
+        cmd = self.factory.createClearCommand(filename, lineNumber)
+        self.gdbserver.send(cmd)
+
        
     def continueExecution(self):
         self.checkConnection();

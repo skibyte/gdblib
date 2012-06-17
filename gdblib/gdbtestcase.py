@@ -19,9 +19,7 @@ import unittest;
 import os
 import time
 from gdblib.gdb import GDB
-from gdblib.exceptions import NotConnectedError
-from gdblib.exceptions import NoLineError
-from gdblib.exceptions import NoSourceFileError
+from gdblib.exceptions import *
 
 class GDBTestCase(unittest.TestCase):
     def setUp(self):
@@ -39,6 +37,9 @@ class GDBTestCase(unittest.TestCase):
 
     def testConneApp(self):
         self.assertTrue(self.connectedGdb.state.isConnected())
+
+    def testConneApp_Twice(self):
+        self.assertRaises(AlreadyConnectedError, self.connectedGdb.connectApp, '', '')
 
     def testConnectApp_IncorrectPath(self):
         self.assertRaises(IOError,self.gdb.connectApp, 'incorrectpath','');
@@ -86,7 +87,7 @@ class GDBTestCase(unittest.TestCase):
         self.assertRaises(NotConnectedError, self.gdb.until)
 
     def testClear_NotConnectedException(self):
-        self.assertRaises(NotConnectedError, self.gdb.clear)
+        self.assertRaises(NotConnectedError, self.gdb.clear, '', 0)
 
     def testContinue_NotConnectedException(self):
         self.assertRaises(NotConnectedError, self.gdb.continueExecution)
@@ -105,6 +106,7 @@ class GDBTestCase(unittest.TestCase):
 
     def testReturn_NotConnectedException(self):
         self.assertRaises(NotConnectedError, self.gdb.returnExecution)
+
 
     def testGetSourceCodeFiles(self):
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/'
@@ -181,16 +183,25 @@ class GDBTestCase(unittest.TestCase):
 
     def testAddBreakpoint(self):
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
-        self.connectedGdb.addBreakpoint(path,22)
-        time.sleep(1)
-        self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
+        path1 =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path1,22)
+        path2 =  os.getcwd() + os.sep + 'gdblib/testapplication/module1/functions.c'
+        self.connectedGdb.addBreakpoint(path2,22)
+
+        self.assertEquals(2, len(self.connectedGdb.getBreakpoints()))
+
         breakpoints = self.connectedGdb.getBreakpoints()
         self.assertEquals(1, breakpoints[0].getNumber())
         self.assertEquals('breakpoint', breakpoints[0].getType())
         self.assertEquals('main', breakpoints[0].getFunction())
-        self.assertEquals('main.c', breakpoints[0].getSourceFile())
+        self.assertEquals(path1, breakpoints[0].getSourceFile(), 'Path is incorrect')
         self.assertEquals(22, breakpoints[0].getLineNumber())
+
+        self.assertEquals(2, breakpoints[1].getNumber())
+        self.assertEquals('breakpoint', breakpoints[1].getType())
+        self.assertEquals('modify_point', breakpoints[1].getFunction())
+        self.assertEquals(path2, breakpoints[1].getSourceFile())
+        self.assertEquals(22, breakpoints[1].getLineNumber())
 
     def testAddBreakpoint_NoSourceFileError(self):
         self.assertRaises(NoSourceFileError, self.connectedGdb.addBreakpoint, 'incorrectfile', 6)
@@ -205,6 +216,13 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
         breakpoints = self.connectedGdb.getBreakpoints()
         self.connectedGdb.deleteBreakpoint(breakpoints[0].getNumber())
+        self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
+   
+    def testClear(self):
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,6)
+        self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
+        self.connectedGdb.clear(path, 6)
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
    
     def testDeleteAllBreakpoints(self):
