@@ -19,9 +19,7 @@ import unittest;
 import os
 import time
 from gdblib.gdb import GDB
-from gdblib.exceptions import NotConnectedError
-from gdblib.exceptions import NoLineError
-from gdblib.exceptions import NoSourceFileError
+from gdblib.exceptions import *
 
 class GDBTestCase(unittest.TestCase):
     def setUp(self):
@@ -39,6 +37,9 @@ class GDBTestCase(unittest.TestCase):
 
     def testConneApp(self):
         self.assertTrue(self.connectedGdb.state.isConnected())
+
+    def testConneApp_Twice(self):
+        self.assertRaises(AlreadyConnectedError, self.connectedGdb.connectApp, '', '')
 
     def testConnectApp_IncorrectPath(self):
         self.assertRaises(IOError,self.gdb.connectApp, 'incorrectpath','');

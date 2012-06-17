@@ -28,3 +28,6 @@ class NoLineError(Exception):
 
 class CommandNotCompletedException(Exception):
     pass
+
+class AlreadyConnectedError(Exception):
+    pass
