@@ -38,6 +38,9 @@ class CommandFactory():
 
     def createContinueCommand(self):
         return ContinueCommand()
+    
+    def createClearCommand(self, filename, line):
+        return ClearCommand(filename, line)
 
     def createAddBreakpointCommand(self, filename, line):
         return AddBreakpointCommand(filename, line)

@@ -86,7 +86,7 @@ class GDBTestCase(unittest.TestCase):
         self.assertRaises(NotConnectedError, self.gdb.until)
 
     def testClear_NotConnectedException(self):
-        self.assertRaises(NotConnectedError, self.gdb.clear)
+        self.assertRaises(NotConnectedError, self.gdb.clear, '', 0)
 
     def testContinue_NotConnectedException(self):
         self.assertRaises(NotConnectedError, self.gdb.continueExecution)
@@ -205,6 +205,13 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
         breakpoints = self.connectedGdb.getBreakpoints()
         self.connectedGdb.deleteBreakpoint(breakpoints[0].getNumber())
+        self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
+   
+    def testClear(self):
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        self.connectedGdb.addBreakpoint(path,6)
+        self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
+        self.connectedGdb.clear(path, 6)
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
    
     def testDeleteAllBreakpoints(self):
