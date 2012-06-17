@@ -106,6 +106,7 @@ class GDBTestCase(unittest.TestCase):
     def testReturn_NotConnectedException(self):
         self.assertRaises(NotConnectedError, self.gdb.returnExecution)
 
+
     def testGetSourceCodeFiles(self):
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/'
         file1 = 'main.c'
@@ -183,13 +184,12 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
         self.connectedGdb.addBreakpoint(path,22)
-        time.sleep(1)
         self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
         breakpoints = self.connectedGdb.getBreakpoints()
         self.assertEquals(1, breakpoints[0].getNumber())
         self.assertEquals('breakpoint', breakpoints[0].getType())
         self.assertEquals('main', breakpoints[0].getFunction())
-        self.assertEquals('main.c', breakpoints[0].getSourceFile())
+        self.assertEquals(path, breakpoints[0].getSourceFile(), 'Path is incorrect')
         self.assertEquals(22, breakpoints[0].getLineNumber())
 
     def testAddBreakpoint_NoSourceFileError(self):

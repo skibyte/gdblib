@@ -43,6 +43,9 @@ class Breakpoint():
     def getSourceFile(self):
         return self.sourcefile
 
+    def setSourceFile(self, sourcefile):
+        self.sourcefile = sourcefile
+
     def __str__(self):
         return str(self.number)
 
