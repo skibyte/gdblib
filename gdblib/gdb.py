@@ -102,7 +102,6 @@ class GDB():
             for f in files:
                 if b.getSourceFile() == f['file']:
                     b.setSourceFile(f['fullname'])
-                    return breakpoints
         
         return breakpoints
 
