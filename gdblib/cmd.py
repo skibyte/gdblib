@@ -38,6 +38,14 @@ class QuitCommand(DefaultCommand):
     def getValue(self):
         return 'quit\n'
 
+class ClearCommand(DefaultCommand):
+    def __init__(self, filename, line):
+        self.filename = filename
+        self.line = line
+
+    def getValue(self):
+        return "clear " + self.filename + ":" + str(self.line) + "\n"
+
 class AddDirectoryCommand(DefaultCommand):
     def __init__(self, directory):
         self.directory = directory

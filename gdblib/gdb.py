@@ -174,8 +174,11 @@ class GDB():
     def until(self):
         self.checkConnection();
 
-    def clear(self):
+    def clear(self, filename, lineNumber):
         self.checkConnection();
+        cmd = self.factory.createClearCommand(filename, lineNumber)
+        self.gdbserver.send(cmd)
+
        
     def continueExecution(self):
         self.checkConnection();
