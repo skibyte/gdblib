@@ -35,12 +35,11 @@ class GDB():
         self.state = GDBState()
         self.fileLocationListeners = []
 
-    def connectApp(self, apppath,apparguments):
+    def connectApp(self, apppath):
         if self.isConnected() == True:
             raise AlreadyConnectedError()
 
         self.apppath = apppath
-        self.apparguments = apparguments
         arguments = ['gdb','-i','mi','-q',self.apppath]
         self.connect(arguments)
     
@@ -66,6 +65,12 @@ class GDB():
 
     def addNewFileLocationListener(self, listener):
         self.fileLocationListeners.append(listener)
+
+    def newFileLocationListeners(self):
+        return self.fileLocationListeners
+
+    def removeNewFileLocationListener(self, listener):
+        self.fileLocationListeners.remove(listener)
 
     def setTty(self, tty):
         self.checkConnection();
@@ -138,9 +143,9 @@ class GDB():
         if not self.isConnected():
             raise NotConnectedError("GDB must be connected before using this method");
 
-    def run(self):
+    def run(self, arguments):
         self.checkConnection()
-        cmd = self.factory.createRunCommand(self.apparguments)
+        cmd = self.factory.createRunCommand(arguments)
         self.gdbserver.send(cmd)
         location = cmd.getLocation()
         if location.has_key('fullname'):

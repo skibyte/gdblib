@@ -38,7 +38,7 @@ class GDBTestCase(unittest.TestCase):
         if(self.fileExists(self.ttyfile) == True):
             os.remove(self.ttyfile)
         try:
-            self.connectedGdb.connectApp('gdblib/testapplication/app','')
+            self.connectedGdb.connectApp('gdblib/testapplication/app')
         except :
             self.tearDown()
 
@@ -53,13 +53,13 @@ class GDBTestCase(unittest.TestCase):
         self.assertTrue(self.connectedGdb.state.isConnected())
 
     def testConneApp_Twice(self):
-        self.assertRaises(AlreadyConnectedError, self.connectedGdb.connectApp, '', '')
+        self.assertRaises(AlreadyConnectedError, self.connectedGdb.connectApp, '')
 
     def testConnectApp_IncorrectPath(self):
-        self.assertRaises(IOError,self.gdb.connectApp, 'incorrectpath','');
+        self.assertRaises(IOError,self.gdb.connectApp, 'incorrectpath');
 
     def testRun_NotConnectedException(self):
-        self.assertRaises(NotConnectedError, self.gdb.run)
+        self.assertRaises(NotConnectedError, self.gdb.run, '')
 
     def testChangeDirectory_NotConnectedException(self):
         self.assertRaises(NotConnectedError, self.gdb.changeDirectory, '')
@@ -139,17 +139,17 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(fullname2, dict2['fullname'])
 
     def testRun(self):
-        self.connectedGdb.run()
+        self.connectedGdb.run('')
 
     def testRun_Twice(self):
-        self.connectedGdb.run()
-        self.connectedGdb.run()
+        self.connectedGdb.run('')
+        self.connectedGdb.run('')
 
     def testStep(self):
         self.connectedGdb.addNewFileLocationListener(self.listener)
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
         self.connectedGdb.addBreakpoint(path,26)
-        self.connectedGdb.run()
+        self.connectedGdb.run('')
         self.connectedGdb.step()
         self.assertEquals(2, self.listener.newFileLocationCounter())
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/module1/functions.c'
@@ -160,7 +160,7 @@ class GDBTestCase(unittest.TestCase):
         self.connectedGdb.addNewFileLocationListener(self.listener)
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
         self.connectedGdb.addBreakpoint(path,26)
-        self.connectedGdb.run()
+        self.connectedGdb.run('')
         self.connectedGdb.next()
         self.assertEquals(2, self.listener.newFileLocationCounter())
         self.assertEquals(path, self.listener.newFile())
@@ -170,14 +170,14 @@ class GDBTestCase(unittest.TestCase):
         self.connectedGdb.addNewFileLocationListener(self.listener)
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
         self.connectedGdb.addBreakpoint(path,26)
-        self.connectedGdb.run()
+        self.connectedGdb.run('')
         self.assertEquals('$1 = 6', self.connectedGdb.p('mypoint.x'))
 
     def testPrint_Incorrect(self):
         self.connectedGdb.addNewFileLocationListener(self.listener)
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
         self.connectedGdb.addBreakpoint(path,26)
-        self.connectedGdb.run()
+        self.connectedGdb.run('')
         self.assertEquals('No symbol \\\"e\\\" in current context.\\n', \
                 self.connectedGdb.p('e'))
 
@@ -185,15 +185,21 @@ class GDBTestCase(unittest.TestCase):
         self.connectedGdb.addNewFileLocationListener(self.listener)
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
         self.connectedGdb.addBreakpoint(path,22)
-        self.connectedGdb.run()
+        self.connectedGdb.run('')
         self.assertEquals(path, self.listener.newFile())
         self.assertEquals(22, self.listener.newLine())
+
+    def testRemoveNewFileLocationListener(self):
+        self.connectedGdb.addNewFileLocationListener(self.listener)
+        self.assertEquals(1, len(self.connectedGdb.newFileLocationListeners()))
+        self.connectedGdb.removeNewFileLocationListener(self.listener)
+        self.assertEquals(0, len(self.connectedGdb.newFileLocationListeners()))
 
     def testsetTty(self):
         handle = open(self.ttyfile, "w")
         handle.close()
         self.connectedGdb.setTty(self.ttyfile)
-        self.connectedGdb.run()
+        self.connectedGdb.run('')
         time.sleep(1)
         handle = open(self.ttyfile, "r")
         expected = 'X:6\tY:7\nX:8\tY:9\n'
@@ -257,7 +263,7 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
         self.connectedGdb.addBreakpoint(path,22)
-        self.connectedGdb.run()
+        self.connectedGdb.run('')
         self.connectedGdb.continueExecution()
 
 
