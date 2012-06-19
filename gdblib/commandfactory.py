@@ -36,6 +36,9 @@ class CommandFactory():
     def createPrintCommand(self, expression):
         return PrintCommand(expression)
 
+    def createTtyCommand(self, tty):
+        return TtyCommand(tty)
+
     def createContinueCommand(self):
         return ContinueCommand()
     

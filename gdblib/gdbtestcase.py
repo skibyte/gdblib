@@ -21,10 +21,22 @@ import time
 from gdblib.gdb import GDB
 from gdblib.exceptions import *
 
+
 class GDBTestCase(unittest.TestCase):
+    def fileExists(self,filename):
+        try :
+            handle = open(filename, "r")
+            handle.close()
+            return True
+        except IOError as e:
+            return False
+
     def setUp(self):
         self.gdb = GDB()
         self.connectedGdb = GDB()
+        self.ttyfile = os.getcwd() + '/gdblib/testapplication/tty.console'
+        if(self.fileExists(self.ttyfile) == True):
+            os.remove(self.ttyfile)
         try:
             self.connectedGdb.connectApp('gdblib/testapplication/app','')
         except :
@@ -34,6 +46,8 @@ class GDBTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.connectedGdb.disconnect()
+        if(self.fileExists(self.ttyfile) == True):
+            os.remove(self.ttyfile)
 
     def testConneApp(self):
         self.assertTrue(self.connectedGdb.state.isConnected())
@@ -175,11 +189,16 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(path, self.listener.newFile())
         self.assertEquals(22, self.listener.newLine())
 
-    def testAddStandardOutputListener(self):
-        self.connectedGdb.addStandardOutputListener(self.listener)
+    def testsetTty(self):
+        handle = open(self.ttyfile, "w")
+        handle.close()
+        self.connectedGdb.setTty(self.ttyfile)
         self.connectedGdb.run()
         time.sleep(1)
-        self.assertEquals('X:6\tY:7\nX:8\tY:9\n', self.listener.standardOutputReceived())
+        handle = open(self.ttyfile, "r")
+        expected = 'X:6\tY:7\nX:8\tY:9\n'
+        self.assertTrue(expected in handle.read())
+        handle.close()
 
     def testAddBreakpoint(self):
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
