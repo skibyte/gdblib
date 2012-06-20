@@ -103,7 +103,7 @@ class RunCommand(AdvanceCommand):
         self.arguments = arguments
 
     def getValue(self):
-        return "run " + self.arguments + " > output.console\n"
+        return "run " + self.arguments + "\n"
 
 class BacktraceCommand(DefaultCommand):
     backtrace = None
@@ -130,7 +130,6 @@ class PrintCommand(DefaultCommand):
 
     def getValue(self):
         return "print " + self.expression + "\n"
-
 
 class SetVarCommand(DefaultCommand):
     def __init__(self, variable, value):
@@ -192,6 +191,13 @@ class DeleteAllBreakpointsCommand(DefaultCommand):
     def getValue(self):
             return 'delete breakpoints\n'
 
+
+class TtyCommand(DefaultCommand):
+    def __init__(self, tty):
+        self.tty = tty
+
+    def getValue(self):
+        return 'tty ' + self.tty + ' \n'
 
 class AddWatchpointCommand(DefaultCommand):
     def __init__(self):

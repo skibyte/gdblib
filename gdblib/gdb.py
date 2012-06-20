@@ -18,7 +18,6 @@
 from gdblib.commandfactory import CommandFactory;
 from gdblib.gdbserver import GDBServer;
 from gdblib.gdbstate import GDBState;
-from gdblib.filewatcher import FileWatcher;
 from gdblib.log import Logger
 from gdblib.exceptions import *
 
@@ -36,16 +35,13 @@ class GDB():
         self.state = GDBState()
         self.fileLocationListeners = []
 
-    def connectApp(self, apppath,apparguments):
+    def connectApp(self, apppath):
         if self.isConnected() == True:
             raise AlreadyConnectedError()
 
         self.apppath = apppath
-        self.apparguments = apparguments
         arguments = ['gdb','-i','mi','-q',self.apppath]
-        self.fileWatcher = FileWatcher(self.apppath[0:self.apppath.rfind('/')]+ '/output.console')
         self.connect(arguments)
-        self.fileWatcher.start()
     
     def connectCore(self,apppath,corepath):
         if self.isConnected() == True:
@@ -70,8 +66,16 @@ class GDB():
     def addNewFileLocationListener(self, listener):
         self.fileLocationListeners.append(listener)
 
-    def addStandardOutputListener(self, listener):
-        self.fileWatcher.addContentListener(listener)
+    def newFileLocationListeners(self):
+        return self.fileLocationListeners
+
+    def removeNewFileLocationListener(self, listener):
+        self.fileLocationListeners.remove(listener)
+
+    def setTty(self, tty):
+        self.checkConnection();
+        cmd = self.factory.createTtyCommand(tty)
+        self.gdbserver.send(cmd)
 
     def addExitListener(self, listener):
         self.exitListeners.append(listener)
@@ -139,9 +143,9 @@ class GDB():
         if not self.isConnected():
             raise NotConnectedError("GDB must be connected before using this method");
 
-    def run(self):
+    def run(self, arguments):
         self.checkConnection()
-        cmd = self.factory.createRunCommand(self.apparguments)
+        cmd = self.factory.createRunCommand(arguments)
         self.gdbserver.send(cmd)
         location = cmd.getLocation()
         if location.has_key('fullname'):
@@ -223,7 +227,6 @@ class GDB():
         self.checkConnection();
         self.gdbserver.stopserver()
         self.state.setConnected(False)
-        self.fileWatcher.stopWatching()
         #self.monitor.destroy()
 
     def isConnected(self):
