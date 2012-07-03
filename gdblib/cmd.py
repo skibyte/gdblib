@@ -227,3 +227,26 @@ class InfoBreakpointCommand(DefaultCommand):
 
     def accept(self, visitor):
         visitor.visitInfoBreakpointCommand(self)
+
+class TargetCommand(DefaultCommand):
+    def __init__(self, host):
+        self.host = host
+
+    def getValue(self):
+        return "target remote " + self.host + "\n"
+
+class SymbolFileCommand(DefaultCommand):
+    def __init__(self, symbol):
+        self.symbol = symbol
+
+    def setSymbolFile(self, symbol):
+        self.symbol = symbol
+
+    def getSymbolFile(self):
+        return self.symbol
+
+    def getValue(self):
+        return "symbol-file " + self.symbol + "\n"
+
+    def accept(self, visitor):
+        visitor.visitSymbolFileCommand(self)

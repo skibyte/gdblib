@@ -71,3 +71,9 @@ class CommandFactory():
 
     def createInfoBreakpointCommand(self):
         return InfoBreakpointCommand()
+
+    def createTargetCommand(self, host):
+        return TargetCommand(host)
+
+    def createSymbolFileCommand(self, symbols):
+        return SymbolFileCommand(symbols)

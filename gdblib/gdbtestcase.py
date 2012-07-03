@@ -19,8 +19,9 @@ import unittest;
 import os
 import time
 from gdblib.gdb import GDB
+from gdblib.gdbremotetestserver import GDBRemoteTestServer
 from gdblib.exceptions import *
-
+from subprocess import call
 
 class GDBTestCase(unittest.TestCase):
     def fileExists(self,filename):
@@ -34,6 +35,8 @@ class GDBTestCase(unittest.TestCase):
     def setUp(self):
         self.gdb = GDB()
         self.connectedGdb = GDB()
+        self.gdbRemote = GDB()
+        self.remoteServer = GDBRemoteTestServer()
         self.ttyfile = os.getcwd() + '/gdblib/testapplication/tty.console'
         if(self.fileExists(self.ttyfile) == True):
             os.remove(self.ttyfile)
@@ -46,8 +49,12 @@ class GDBTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.connectedGdb.disconnect()
+        self.remoteServer.stop()
         if(self.fileExists(self.ttyfile) == True):
             os.remove(self.ttyfile)
+
+        if self.gdbRemote.isConnected() == True:
+            self.gdbRemote.disconnect()
 
     def testConneApp(self):
         self.assertTrue(self.connectedGdb.state.isConnected())
@@ -266,6 +273,18 @@ class GDBTestCase(unittest.TestCase):
         self.connectedGdb.run('')
         self.connectedGdb.continueExecution()
 
+    def testRemoteTarget(self):
+        self.remoteServer.start()
+        self.gdbRemote.connectRemote(':1234')
+        self.assertTrue(self.gdbRemote.isConnected())
+
+
+    def testSymbolFile(self):
+        self.remoteServer.start()
+        self.gdbRemote.connectRemote(':1234')
+        symbol = self.gdbRemote.symbolFile('gdblib/testapplication/app')
+        path =  os.getcwd() + os.sep + 'gdblib/testapplication/app'
+        self.assertEquals(path, symbol)
 
 class Listener():
     output = ''
