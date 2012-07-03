@@ -277,7 +277,6 @@ class GDBTestCase(unittest.TestCase):
         self.remoteServer.start()
         self.gdbRemote.connectRemote(':1234')
         self.assertTrue(self.gdbRemote.isConnected())
-        ##self.gdbRemote.continueExecution()
 
 
     def testSymbolFile(self):
