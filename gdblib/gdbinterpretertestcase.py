@@ -115,5 +115,13 @@ class GDBInterpreterTestCase(unittest.TestCase):
         self.assertEquals('/home/lobo/programming/projects/python/gdb_frontend/test/org/qdebug/gdb/testapplication/module1/functions.c', location['fullname'])
         self.assertEquals(13, location['line'])
         
+    def testParse_SymbolFile(self):
+        handle = open("gdblib/test_files/symbol-file.dat", "r")
+        content = handle.readlines()
+        handle.close()
+        symbol = self.interpreter.parseSymbolFileCommand(content)
+        self.assertEquals('/home/lobo/Programming/projects/python/gdblib/gdblib/testapplication/app',
+                symbol)
+
 if __name__ == '__main__':
     unittest.main()

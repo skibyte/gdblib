@@ -94,6 +94,12 @@ class GDBInterpreter():
             if matches:
                 return matches.group(1)
 
+    def parseSymbolFileCommand(self, output):
+        for line in output:
+            matches = re.match(r'~\"Reading symbols from (.*)\.\.\.\"',line)
+            if matches:
+                return matches.group(1)
+
     def parse(self,cmd, output):
         self.output = output
         cmd.accept(self)
@@ -127,3 +133,6 @@ class GDBInterpreter():
 
     def visitPrintCommand(self, cmd):
         cmd.setResult(self.parsePrintCommand(self.output))
+
+    def visitSymbolFileCommand(self, cmd):
+        cmd.setSymbolFile(self.parseSymbolFileCommand(self.output))

@@ -1,0 +1,7 @@
+symbol-file app
+&"symbol-file app\n"
+~"Reading symbols from /home/lobo/Programming/projects/python/gdblib/gdblib/testapplication/app..."
+~"done.\n"
+^done
+(gdb) 
+

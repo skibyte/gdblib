@@ -40,8 +40,11 @@ class GDB():
             raise AlreadyConnectedError()
 
         self.apppath = apppath
+        handle = open(self.apppath);
+        handle.close();
         arguments = ['gdb','-i','mi','-q',self.apppath]
         self.connect(arguments)
+        self.changeDirectory(path.dirname(arguments[4])) 
     
     def connectCore(self,apppath,corepath):
         if self.isConnected() == True:
@@ -50,18 +53,27 @@ class GDB():
         arguments = ['gdb','-i','mi','-q', self.apppath, corepath]
         self.connect(arguments)
 
+    def connectRemote(self, host):
+        if(self.isConnected() == True):
+                raise AlreadyConnectedError()
+        self.host = host
+        arguments = ['gdb','-i','mi','-q']
+        self.connect(arguments)
+        self.checkConnection();
+        cmd = self.factory.createTargetCommand(host)
+        self.gdbserver.send(cmd)
+        self.state.setConnected(cmd.isComplete())
+
+
     def connect(self,arguments):
         if self.isConnected() == True:
             raise AlreadyConnectedError()
-        handle = open(self.apppath);
-        handle.close();
         self.process = subprocess.Popen(arguments,
                 shell=False,stdin=subprocess.PIPE,
                 stdout = subprocess.PIPE)
         self.gdbserver = GDBServer(self.process)
         self.gdbserver.start()
         self.state.setConnected(True)
-        self.changeDirectory(path.dirname(arguments[4])) 
 
     def addNewFileLocationListener(self, listener):
         self.fileLocationListeners.append(listener)
@@ -86,14 +98,20 @@ class GDB():
         self.gdbserver.send(cmd)
 
     def setCore(self,value):
-        self.checkConnection();
+        self.checkConnection()
         self.core = value
 
     def getSourceCodeFiles(self):
-        self.checkConnection();
+        self.checkConnection()
         cmd = self.factory.createInfoSourceCommand()
         self.gdbserver.send(cmd)
         return cmd.getSourceFiles()
+
+    def symbolFile(self, symbol):
+            self.checkConnection()
+            cmd = self.factory.createSymbolFileCommand(symbol)
+            self.gdbserver.send(cmd)
+            return cmd.getSymbolFile()
 
     def addBreakpoint(self, filename, line):
         self.checkConnection();

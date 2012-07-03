@@ -28,7 +28,6 @@ Usage
 
 Todo
 ----
-* Add remote debugging support
 * Add attach process support
 * Add core support
 * Implement more gdb commands
