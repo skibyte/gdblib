@@ -20,7 +20,7 @@ import logging
 
 class Logger:
     enabled = False
-    level = logging.DEBUG
+    level = logging.INFO
 
     def __init__(self,name):
         self.logger = logging.getLogger(name)

@@ -16,7 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 from threading import Thread;
+import signal
 import subprocess;
+import time
 class GDBRemoteTestServer(Thread):
     def __init__(self):
         Thread.__init__(self)
@@ -31,5 +33,6 @@ class GDBRemoteTestServer(Thread):
 
     def stop(self):
         if self.started == True:
-            self.process.terminate()
+            self.process.send_signal(signal.SIGKILL)
+            time.sleep(1)
 
