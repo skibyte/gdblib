@@ -108,10 +108,15 @@ class GDB():
         return cmd.getSourceFiles()
 
     def symbolFile(self, symbol):
-            self.checkConnection()
-            cmd = self.factory.createSymbolFileCommand(symbol)
-            self.gdbserver.send(cmd)
-            return cmd.getSymbolFile()
+        self.checkConnection()
+        cmd = self.factory.createSymbolFileCommand(symbol)
+        self.gdbserver.send(cmd)
+        return cmd.getSymbolFile()
+
+    def load(self, symbol):
+        self.checkConnection()
+        cmd = self.factory.createLoadCommand(symbol)
+        self.gdbserver.send(cmd)
 
     def addBreakpoint(self, filename, line):
         self.checkConnection();

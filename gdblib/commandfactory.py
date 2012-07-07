@@ -77,3 +77,6 @@ class CommandFactory():
 
     def createSymbolFileCommand(self, symbols):
         return SymbolFileCommand(symbols)
+
+    def createLoadCommand(self, symbol):
+        return LoadCommand(symbol)

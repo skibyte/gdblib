@@ -290,6 +290,13 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(path, symbol)
         self.remoteServer.stop()
 
+    def testLoad(self):
+        self.remoteServer.start()
+        time.sleep(1)
+        self.gdbRemote.connectRemote(':1234')
+        symbol = self.gdbRemote.load('gdblib/testapplication/app')
+        self.remoteServer.stop()
+
 class Listener():
     output = ''
     eventCounter = 0
