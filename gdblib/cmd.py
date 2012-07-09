@@ -250,3 +250,10 @@ class SymbolFileCommand(DefaultCommand):
 
     def accept(self, visitor):
         visitor.visitSymbolFileCommand(self)
+
+class LoadCommand(DefaultCommand):
+    def __init__(self, symbol):
+        self.symbol = symbol
+
+    def getValue(self):
+        return "load " + self.symbol + "\n"

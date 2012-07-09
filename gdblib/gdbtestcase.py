@@ -49,7 +49,6 @@ class GDBTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.connectedGdb.disconnect()
-        self.remoteServer.stop()
         if(self.fileExists(self.ttyfile) == True):
             os.remove(self.ttyfile)
 
@@ -275,16 +274,28 @@ class GDBTestCase(unittest.TestCase):
 
     def testRemoteTarget(self):
         self.remoteServer.start()
+        time.sleep(1)
         self.gdbRemote.connectRemote(':1234')
         self.assertTrue(self.gdbRemote.isConnected())
+        self.gdbRemote.continueExecution()
+        self.remoteServer.stop()
 
 
     def testSymbolFile(self):
         self.remoteServer.start()
+        time.sleep(1)
         self.gdbRemote.connectRemote(':1234')
         symbol = self.gdbRemote.symbolFile('gdblib/testapplication/app')
         path =  os.getcwd() + os.sep + 'gdblib/testapplication/app'
         self.assertEquals(path, symbol)
+        self.remoteServer.stop()
+
+    def testLoad(self):
+        self.remoteServer.start()
+        time.sleep(1)
+        self.gdbRemote.connectRemote(':1234')
+        symbol = self.gdbRemote.load('gdblib/testapplication/app')
+        self.remoteServer.stop()
 
 class Listener():
     output = ''

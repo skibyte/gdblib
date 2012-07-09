@@ -44,7 +44,7 @@ class GDBServer(Thread):
             line = self.process.stdout.readline()
             self.log.debug(line)
             self.output += line
-            if(self.currentcmd != None and not self.currentcmd.isComplete()):
+            if self.currentcmd != None and not self.currentcmd.isComplete():
                 self.completevisitor.setoutput(self.output)
                 self.currentcmd.accept(self.completevisitor)
 
@@ -76,6 +76,5 @@ class GDBServer(Thread):
     def stopserver(self):
         self.send(QuitCommand())
         self.working = False
-        self.currentcmd = None
         
         
