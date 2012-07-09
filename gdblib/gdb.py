@@ -34,6 +34,10 @@ class GDB():
         self.factory = CommandFactory()
         self.state = GDBState()
         self.fileLocationListeners = []
+        self.binary = 'gdb'
+
+    def gdbBinary(self, binary):
+        self.binary = binary
 
     def connectApp(self, apppath):
         if self.isConnected() == True:
@@ -42,7 +46,7 @@ class GDB():
         self.apppath = apppath
         handle = open(self.apppath);
         handle.close();
-        arguments = ['gdb','-i','mi','-q',self.apppath]
+        arguments = [self.binary,'-i','mi','-q',self.apppath]
         self.connect(arguments)
         self.changeDirectory(path.dirname(arguments[4])) 
     
@@ -50,14 +54,14 @@ class GDB():
         if self.isConnected() == True:
             raise AlreadyConnectedError()
         self.apppath = apppath
-        arguments = ['gdb','-i','mi','-q', self.apppath, corepath]
+        arguments = [self.binary,'-i','mi','-q', self.apppath, corepath]
         self.connect(arguments)
 
     def connectRemote(self, host):
         if(self.isConnected() == True):
                 raise AlreadyConnectedError()
         self.host = host
-        arguments = ['gdb','-i','mi','-q']
+        arguments = [self.binary,'-i','mi','-q']
         self.connect(arguments)
         self.checkConnection();
         cmd = self.factory.createTargetCommand(host)
