@@ -28,6 +28,9 @@ class CompleteVisitor():
         if not cmd.isComplete():
             cmd.setCompleted(self.findstr('(gdb)',1))
 
+        if not cmd.isComplete():
+            cmd.setCompleted(self.findstr('^error',1))
+
     def visitAdvanceCommand(self,cmd):
         cmd.setCompleted(self.findstr('(gdb)',2))
         if not cmd.isComplete():
@@ -64,3 +67,9 @@ class CompleteVisitor():
 
     def visitSymbolFileCommand(self, cmd):
         self.visitDefaultCommand(cmd)
+
+    def visitTargetRemoteCommand(self, cmd):
+        cmd.setCompleted(self.findstr('^error',1))
+        if not cmd.isComplete():
+            cmd.setCompleted(self.findstr('(gdb)',2))
+

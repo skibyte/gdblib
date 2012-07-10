@@ -280,6 +280,10 @@ class GDBTestCase(unittest.TestCase):
         self.gdbRemote.continueExecution()
         self.remoteServer.stop()
 
+    def testRemoteTarget_Timeout(self):
+        time.sleep(1)
+        self.assertRaises(TimeoutError, self.gdbRemote.connectRemote, ':1234')
+
 
     def testSymbolFile(self):
         self.remoteServer.start()

@@ -63,10 +63,11 @@ class GDB():
         self.host = host
         arguments = [self.binary,'-i','mi','-q']
         self.connect(arguments)
-        self.checkConnection();
+        self.checkConnection()
         cmd = self.factory.createTargetCommand(host)
         self.gdbserver.send(cmd)
-        self.state.setConnected(cmd.isComplete())
+        if cmd.getTimeoutError() == True:
+            raise TimeoutError('Connection timed out.')
 
 
     def connect(self,arguments):

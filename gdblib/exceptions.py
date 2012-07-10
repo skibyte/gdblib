@@ -31,3 +31,6 @@ class CommandNotCompletedException(Exception):
 
 class AlreadyConnectedError(Exception):
     pass
+
+class TimeoutError(Exception):
+    pass

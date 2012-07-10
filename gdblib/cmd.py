@@ -231,9 +231,19 @@ class InfoBreakpointCommand(DefaultCommand):
 class TargetCommand(DefaultCommand):
     def __init__(self, host):
         self.host = host
+        self.timeout = False
+
+    def setTimeoutError(self, error):
+        self.timeout = error
+
+    def getTimeoutError(self):
+        return self.timeout
 
     def getValue(self):
         return "target remote " + self.host + "\n"
+
+    def accept(self, visitor):
+        visitor.visitTargetRemoteCommand(self)
 
 class SymbolFileCommand(DefaultCommand):
     def __init__(self, symbol):

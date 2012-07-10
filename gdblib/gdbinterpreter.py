@@ -100,6 +100,14 @@ class GDBInterpreter():
             if matches:
                 return matches.group(1)
 
+    def parseTargetRemoteCommand(self, output):
+        for line in output:
+            matches = re.match(r'.*Connection timed out.*',line)
+            if matches:
+                return True
+
+        return False
+
     def parse(self,cmd, output):
         self.output = output
         cmd.accept(self)
@@ -136,3 +144,6 @@ class GDBInterpreter():
 
     def visitSymbolFileCommand(self, cmd):
         cmd.setSymbolFile(self.parseSymbolFileCommand(self.output))
+
+    def visitTargetRemoteCommand(self, cmd):
+        cmd.setTimeoutError(self.parseTargetRemoteCommand(self.output))
