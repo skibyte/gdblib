@@ -42,7 +42,7 @@ class GDBServer(Thread):
         lineCondition = threading.Condition()
         while(self.working):
             line = self.process.stdout.readline()
-            self.log.debug(line)
+            self.log.info(line)
             self.output += line
             if self.currentcmd != None and not self.currentcmd.isComplete():
                 self.completevisitor.setoutput(self.output)
@@ -60,13 +60,11 @@ class GDBServer(Thread):
         self.log.info("Write -> " + str(cmd.getValue()))
         self.cmdcondition.acquire()
         self.process.stdin.write(cmd.getValue())
-        self.cmdcondition.wait(5)
+        self.cmdcondition.wait(15)
 
         try:
-            if self.currentcmd.isComplete() == False:
-                raise CommandNotCompletedException('The command ' + cmd.getValue() + ' could not be completed')
-
-            self.interpreter.parse(self.currentcmd,self.output.split('\n')) 
+            if self.currentcmd.isComplete() == True:
+                self.interpreter.parse(self.currentcmd,self.output.split('\n')) 
         finally:
             self.cmdcondition.release()
             self.cmdSingle.release()
@@ -74,7 +72,8 @@ class GDBServer(Thread):
 
     # FIXME: Start gdb without confirmation questions
     def stopserver(self):
-        self.send(QuitCommand())
+        self.output = ''
+        self.process.stdin.write("quit\n")
         self.working = False
         
         

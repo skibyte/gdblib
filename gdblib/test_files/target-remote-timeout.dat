@@ -1,0 +1,5 @@
+target remote :1234
+&"target remote :1234\n"
+&":1234: Connection timed out.\n"
+^error,msg=":1234: Connection timed out."
+(gdb)

@@ -123,5 +123,11 @@ class GDBInterpreterTestCase(unittest.TestCase):
         self.assertEquals('/home/lobo/Programming/projects/python/gdblib/gdblib/testapplication/app',
                 symbol)
 
+    def testParse_TargetRemote(self):
+        handle = open('gdblib/test_files/target-remote-timeout.dat', 'r')
+        content = handle.readlines()
+        handle.close()
+        self.assertTrue(self.interpreter.parseTargetRemoteCommand(content))
+
 if __name__ == '__main__':
     unittest.main()

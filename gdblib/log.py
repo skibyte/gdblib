@@ -17,18 +17,23 @@
 #
 #                                                                                                                              
 import logging
-
+import threading
 class Logger:
     enabled = False
     level = logging.INFO
+    loggers = {}
 
     def __init__(self,name):
-        self.logger = logging.getLogger(name)
-        self.logger.setLevel(self.level)
-        self.consoleHandler = logging.StreamHandler()
-        self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        self.consoleHandler.setFormatter(self.formatter)
-        self.logger.addHandler(self.consoleHandler)
+        if self.loggers.get(name, '') != '':
+            self.logger = self.loggers[name]
+        else:
+            self.logger = logging.getLogger(name)
+            self.logger.setLevel(self.level)
+            self.consoleHandler = logging.StreamHandler()
+            self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            self.consoleHandler.setFormatter(self.formatter)
+            self.logger.addHandler(self.consoleHandler)
+            self.loggers[name] = self.logger
 
     def logInConsole(self):
         self.logger.addHandler(self.consoleHandler)
