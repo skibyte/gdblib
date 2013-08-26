@@ -20,7 +20,7 @@ import logging
 import threading
 class Logger:
     enabled = False
-    level = logging.INFO
+    level = logging.DEBUG
     loggers = {}
 
     def __init__(self,name):

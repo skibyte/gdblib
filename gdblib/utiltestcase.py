@@ -16,12 +16,23 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 import unittest
+import os
 
 from gdblib import util
 
 class UtilTestCase(unittest.TestCase):
     def testRemoveFile(self):
-        path = '/home/test/a.txt'
-        self.assertEquals('/home/test', util.removeFile(path))
+        path = os.sep
+        path += 'home'
+        path += os.sep
+        path += 'test'
+        path += os.sep
+        path += 'a.txt'
+
+        expected = os.sep
+        expected += 'home'
+        expected += os.sep
+        expected += 'test'
+        self.assertEquals(expected, util.removeFile(path))
 
 

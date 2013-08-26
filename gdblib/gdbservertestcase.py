@@ -20,11 +20,16 @@ import unittest
 import subprocess;
 import os
 import time
+import platform
 from gdblib.gdbserver import GDBServer
 
 class GDBServerTestCase(unittest.TestCase):
     def setUp(self):
-        self.apppath = 'gdblib/testapplication/app'
+        if platform.system() == 'Windows':
+            self.apppath = 'gdblib' + os.sep + 'testapplication' + os.sep + 'app.exe'
+        else:
+            self.apppath = 'gdblib' + os.sep + 'testapplication' + os.sep + 'app'
+
         self.arguments = ['gdb','-i','mi','-q',self.apppath, '']
         self.process = subprocess.Popen(self.arguments,
                 shell=False,stdin=subprocess.PIPE,

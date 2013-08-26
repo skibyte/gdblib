@@ -18,6 +18,8 @@
 import unittest;
 import os
 import time
+import platform
+
 from gdblib.gdb import GDB
 from gdblib.gdbremotetestserver import GDBRemoteTestServer
 from gdblib.exceptions import *
@@ -41,8 +43,11 @@ class GDBTestCase(unittest.TestCase):
         if(self.fileExists(self.ttyfile) == True):
             os.remove(self.ttyfile)
         try:
-            self.connectedGdb.connectApp('gdblib/testapplication/app')
-        except :
+            if platform.system() == 'Windows':
+                self.connectedGdb.connectApp('gdblib' + os.sep + 'testapplication' + os.sep + 'app.exe')
+            else:
+                self.connectedGdb.connectApp('gdblib' + os.sep + 'testapplication' + os.sep + 'app')
+        except AlreadyConnectedError:
             self.tearDown()
 
         self.listener = Listener()
@@ -52,8 +57,9 @@ class GDBTestCase(unittest.TestCase):
         if(self.fileExists(self.ttyfile) == True):
             os.remove(self.ttyfile)
 
-        if self.gdbRemote.isConnected() == True:
-            self.gdbRemote.disconnect()
+        if not platform.system() == 'Windows':
+            if self.gdbRemote.isConnected() == True:
+                self.gdbRemote.disconnect()
 
     def testConneApp(self):
         self.assertTrue(self.connectedGdb.state.isConnected())
@@ -129,9 +135,10 @@ class GDBTestCase(unittest.TestCase):
 
 
     def testGetSourceCodeFiles(self):
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep
         file1 = 'main.c'
-        file2 = 'module1/functions.c'
+        file2 = 'module1' + os.sep + 'functions.c'
+
 
         fullname1 = path + file1
         fullname2 = path + file2
@@ -153,18 +160,18 @@ class GDBTestCase(unittest.TestCase):
 
     def testStep(self):
         self.connectedGdb.addNewFileLocationListener(self.listener)
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'main.c'
         self.connectedGdb.addBreakpoint(path,26)
         self.connectedGdb.run('')
         self.connectedGdb.step()
         self.assertEquals(2, self.listener.newFileLocationCounter())
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/module1/functions.c'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'module1' + os.sep + 'functions.c'
         self.assertEquals(path, self.listener.newFile())
         self.assertEquals(23, self.listener.newLine())
 
     def testNext(self):
         self.connectedGdb.addNewFileLocationListener(self.listener)
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'main.c'
         self.connectedGdb.addBreakpoint(path,26)
         self.connectedGdb.run('')
         self.connectedGdb.next()
@@ -174,14 +181,14 @@ class GDBTestCase(unittest.TestCase):
 
     def testPrint(self):
         self.connectedGdb.addNewFileLocationListener(self.listener)
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'main.c'
         self.connectedGdb.addBreakpoint(path,26)
         self.connectedGdb.run('')
         self.assertEquals('$1 = 6', self.connectedGdb.p('mypoint.x'))
 
     def testPrint_Incorrect(self):
         self.connectedGdb.addNewFileLocationListener(self.listener)
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication'  + os.sep + 'main.c'
         self.connectedGdb.addBreakpoint(path,26)
         self.connectedGdb.run('')
         self.assertEquals('No symbol \\\"e\\\" in current context.\\n', \
@@ -189,7 +196,7 @@ class GDBTestCase(unittest.TestCase):
 
     def testAddNewFileLocationListener(self):
         self.connectedGdb.addNewFileLocationListener(self.listener)
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'main.c'
         self.connectedGdb.addBreakpoint(path,22)
         self.connectedGdb.run('')
         self.assertEquals(path, self.listener.newFile())
@@ -202,21 +209,27 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(0, len(self.connectedGdb.newFileLocationListeners()))
 
     def testsetTty(self):
-        handle = open(self.ttyfile, "w")
-        handle.close()
-        self.connectedGdb.setTty(self.ttyfile)
-        self.connectedGdb.run('')
-        time.sleep(1)
-        handle = open(self.ttyfile, "r")
-        expected = 'X:6\tY:7\nX:8\tY:9\n'
-        self.assertTrue(expected in handle.read())
-        handle.close()
+        if not platform.system() == 'Windows':
+            handle = open(self.ttyfile, "w")
+            handle.close()
+            self.connectedGdb.setTty(self.ttyfile)
+            self.connectedGdb.run('')
+            time.sleep(5)
+            handle = open(self.ttyfile, "r")
+            expected = 'X:6\tY:7\nX:8\tY:9\n'
+            self.assertTrue(expected in handle.read())
+            handle.close()
+        else:
+            print "\n" + self.testsetTty.__name__ + " is not implemented yet"
 
     def testAddBreakpoint(self):
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
-        path1 =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        path1 =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'main.c'
+
         self.connectedGdb.addBreakpoint(path1,22)
-        path2 =  os.getcwd() + os.sep + 'gdblib/testapplication/module1/functions.c'
+        self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
+
+        path2 =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'module1' + os.sep + 'functions.c'
         self.connectedGdb.addBreakpoint(path2,22)
 
         self.assertEquals(2, len(self.connectedGdb.getBreakpoints()))
@@ -238,11 +251,11 @@ class GDBTestCase(unittest.TestCase):
         self.assertRaises(NoSourceFileError, self.connectedGdb.addBreakpoint, 'incorrectfile', 6)
 
     def testAddBreakpoint_NoLineError(self):
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'main.c'
         self.assertRaises(NoLineError, self.connectedGdb.addBreakpoint, path, 99)
 
     def testDeleteBreakpoint(self):
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'main.c'
         self.connectedGdb.addBreakpoint(path,6)
         self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
         breakpoints = self.connectedGdb.getBreakpoints()
@@ -250,14 +263,14 @@ class GDBTestCase(unittest.TestCase):
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
    
     def testClear(self):
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'main.c'
         self.connectedGdb.addBreakpoint(path,6)
         self.assertEquals(1, len(self.connectedGdb.getBreakpoints()))
         self.connectedGdb.clear(path, 6)
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
    
     def testDeleteAllBreakpoints(self):
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'main.c'
         self.connectedGdb.addBreakpoint(path,6)
         self.connectedGdb.addBreakpoint(path,7)
         self.assertEquals(2, len(self.connectedGdb.getBreakpoints()))
@@ -267,39 +280,51 @@ class GDBTestCase(unittest.TestCase):
     
     def testContinueExecution(self):
         self.assertEquals(0, len(self.connectedGdb.getBreakpoints()))
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/main.c'
+        path =  os.getcwd() + os.sep + 'gdblib' + os.sep + 'testapplication' + os.sep + 'main.c'
         self.connectedGdb.addBreakpoint(path,22)
         self.connectedGdb.run('')
         self.connectedGdb.continueExecution()
 
     def testRemoteTarget(self):
-        self.remoteServer.start()
-        time.sleep(1)
-        self.gdbRemote.connectRemote(':1234')
-        self.assertTrue(self.gdbRemote.isConnected())
-        self.gdbRemote.continueExecution()
-        self.remoteServer.stop()
+        if not platform.system() == 'Windows':
+            self.remoteServer.start()
+            time.sleep(1)
+            self.gdbRemote.connectRemote(':1234')
+            self.assertTrue(self.gdbRemote.isConnected())
+            self.gdbRemote.continueExecution()
+            self.remoteServer.stop()
+        else:
+            print "\n" + self.testRemoteTarget.__name__ + " is not implemented yet"
 
     def testRemoteTarget_Timeout(self):
-        time.sleep(1)
-        self.assertRaises(TimeoutError, self.gdbRemote.connectRemote, ':1234')
+        if not platform.system() == 'Windows':
+            time.sleep(1)
+            self.assertRaises(TimeoutError, self.gdbRemote.connectRemote, ':1234')
+        else:
+            print "\n" + self.testRemoteTarget_Timeout.__name__ + " is not implemented yet"
 
 
     def testSymbolFile(self):
-        self.remoteServer.start()
-        time.sleep(1)
-        self.gdbRemote.connectRemote(':1234')
-        symbol = self.gdbRemote.symbolFile('gdblib/testapplication/app')
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/app'
-        self.assertEquals(path, symbol)
-        self.remoteServer.stop()
+        if not platform.system() == 'Windows':
+            self.remoteServer.start()
+            time.sleep(1)
+            self.gdbRemote.connectRemote(':1234')
+            symbol = self.gdbRemote.symbolFile('gdblib/testapplication/app')
+            path =  os.getcwd() + os.sep + 'gdblib/testapplication/app'
+            self.assertEquals(path, symbol)
+            self.remoteServer.stop()
+        else:
+            print "\n" + self.testSymbolFile.__name__ + " is not implemented yet"
 
     def testLoad(self):
-        self.remoteServer.start()
-        time.sleep(1)
-        self.gdbRemote.connectRemote(':1234')
-        symbol = self.gdbRemote.load('gdblib/testapplication/app')
-        self.remoteServer.stop()
+        if not platform.system() == 'Windows':
+            self.remoteServer.start()
+            time.sleep(1)
+            self.gdbRemote.connectRemote(':1234')
+            symbol = self.gdbRemote.load('gdblib/testapplication/app')
+            self.remoteServer.stop()
+        else:
+            print "\n" + self.testLoad.__name__ + " is not implemented yet"
 
 class Listener():
     output = ''

@@ -22,6 +22,8 @@ from threading import Thread;
 import threading;
 import subprocess;
 import time;
+import platform
+import os
 from gdblib.completevisitor import CompleteVisitor;
 from gdblib.log import Logger
 
@@ -42,6 +44,9 @@ class GDBServer(Thread):
         lineCondition = threading.Condition()
         while(self.working):
             line = self.process.stdout.readline()
+            if platform.system() == 'Windows':
+                line = line.replace(os.sep + os.sep + '', os.sep)
+                line = line.replace('/', os.sep)
             self.log.info(line)
             self.output += line
             if self.currentcmd != None and not self.currentcmd.isComplete():
