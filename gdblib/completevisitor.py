@@ -62,8 +62,8 @@ class CompleteVisitor():
         
         return False
                 
-    def visitListSourceFilesCmd(self,cmd):
-        cmd.setCompleted(self.findstr('(gdb)',2))
+    def visitListSourceFilesCommand(self,cmd):
+        cmd.setCompleted(self.findstr('(gdb)',1))
 
     def visitSymbolFileCommand(self, cmd):
         self.visitDefaultCommand(cmd)

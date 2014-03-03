@@ -290,7 +290,7 @@ class GDBTestCase(unittest.TestCase):
         time.sleep(1)
         self.gdbRemote.connectRemote(':1234')
         symbol = self.gdbRemote.symbolFile('gdblib/testapplication/app')
-        path =  os.getcwd() + os.sep + 'gdblib/testapplication/app'
+        path = 'gdblib/testapplication/app'
         self.assertEquals(path, symbol)
         self.remoteServer.stop()
 

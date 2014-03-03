@@ -112,7 +112,7 @@ class GDBInterpreter():
         self.output = output
         cmd.accept(self)
 
-    def visitListSourceFilesCmd(self,cmd):
+    def visitListSourceFilesCommand(self,cmd):
         cmd.setSourceFiles(self.parseListSourceFiles(self.output))
 
     def visitAddBreakpointCommand(self,cmd):

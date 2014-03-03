@@ -29,3 +29,9 @@ class CompleteVisitorTestCase(unittest.TestCase):
         self.visitor.setoutput('&"quit\\n"')
         self.visitor.visitDefaultCommand(quit)
         self.assertEquals(True, quit.isComplete(), 'Quit command not completed')
+
+    def testVisitListSourceFilesCommand(self):
+        listFiles = ListSourceFilesCommand()
+        self.visitor.setoutput(' &"interpreter-exec mi \"-file-list-exec-source-files\"\n" ^done,files=[{file="main.c",fullname="/home/lobo/programming/projects/python/gdb_frontend/test/org/qdebug/gdb/testapplication/main.c"},{file="module1/functions.c",fullname="/home/lobo/programming/projects/python/gdb_frontend/test/org/qdebug/gdb/testapplication/module1/functions.c"}] ^done (gdb) ')
+        self.visitor.visitListSourceFilesCommand(listFiles)
+        self.assertEquals(True, listFiles.isComplete(), 'List source files command is not complete')

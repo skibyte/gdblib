@@ -68,8 +68,12 @@ class ChangeDirectoryCommand(DefaultCommand):
         visitor.visitChangeDirectoryCommand(self)
 
 class ListSourceFilesCommand(DefaultCommand):
+    def __init__(self):
+        self.sourcefiles = None
+
     def getValue(self):
         return "interpreter-exec mi \"-file-list-exec-source-files\"\n"    
+
     def getSourceFiles(self):    
         return self.sourcefiles
 
@@ -77,7 +81,7 @@ class ListSourceFilesCommand(DefaultCommand):
         self.sourcefiles = files
 
     def accept(self,visitor):
-        visitor.visitListSourceFilesCmd(self)
+        visitor.visitListSourceFilesCommand(self)
 
 
 class AdvanceCommand(DefaultCommand):
