@@ -24,7 +24,7 @@ class GDBInterpreter():
     def parseInfoBreak(self, gdboutputlines):
         breakpoints = []
         for line in gdboutputlines:
-            matches = re.match(r'~"(\d+)\s+(\w+)\s+\w+\s+\w+\s+(\w+)\s+in\s+(\w+)\s+at\s+(\w+/*\w+\.\w+):(\d+)\\n', line)
+            matches = re.match(r'~"(\d+)\s+(\w+)\s+\w+\s+\w+\s+(\w+)\s+in\s+(\w+)\s+at\s+(\w+.*\w+\.\w+):(\d+)\\n', line)
             if(matches):
                 number = int(matches.group(1))
                 breakpointType = matches.group(2)

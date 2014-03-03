@@ -39,4 +39,4 @@ Gdb lib is licenced under a LGPL v3 license. Please see COPYING file for details
 
 Report a bug
 ------------
-If you find a bug in walldo please let me know in the following page: https://github.com/skibyte/gdblib/issues
+If you find a bug in gdblib please let me know in the following page: https://github.com/skibyte/gdblib/issues

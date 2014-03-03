@@ -73,6 +73,17 @@ class GDBInterpreterTestCase(unittest.TestCase):
         self._testBreak(breaks[0], 1, "breakpoint", "0x98ea1", "main", 169, "src/main.c")
         self._testBreak(breaks[1], 2, "breakpoint", "0x98e77", "main", 192, "src/main.c")
 
+    def testParse_Info_Break_Windows(self):
+        #"info breakpoints"
+        handle = open("gdblib/test_files/info_break_windows.dat","r")
+        filecontent = handle.readlines()
+        handle.close()        
+        breaks = self.interpreter.parseInfoBreak(filecontent)
+        
+        self.assertEqual(2, len(breaks))
+        self._testBreak(breaks[0], 1, "breakpoint", "0x98ea1", "main", 169, "src\main.c")
+        self._testBreak(breaks[1], 2, "breakpoint", "0x98e77", "main", 192, "src\main.c")
+
     def testParse_ListSourceFiles(self):
         handle = open("gdblib/test_files/list_source_files.dat", "r")
         filecontent = handle.readlines()
