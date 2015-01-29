@@ -36,6 +36,10 @@ class GDB():
         self.fileLocationListeners = []
         self.binary = 'gdb'
 
+    def __del__(self):
+        if self.isConnected():
+            self.disconnect()
+
     def gdbBinary(self, binary):
         self.binary = binary
 

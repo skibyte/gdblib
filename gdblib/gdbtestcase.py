@@ -316,6 +316,13 @@ class GDBTestCase(unittest.TestCase):
         else:
             print "\n" + self.testSymbolFile.__name__ + " is not implemented yet"
 
+    def testHang(self):
+        hangGdb = GDB()
+        if platform.system() == 'Windows':
+            hangGdb.connectApp('gdblib' + os.sep + 'testapplication' + os.sep + 'app.exe')
+        else:
+            hangGdb.connectApp('gdblib' + os.sep + 'testapplication' + os.sep + 'app')
+
     def testLoad(self):
         if not platform.system() == 'Windows':
             self.remoteServer.start()
@@ -325,6 +332,7 @@ class GDBTestCase(unittest.TestCase):
             self.remoteServer.stop()
         else:
             print "\n" + self.testLoad.__name__ + " is not implemented yet"
+
 
 class Listener():
     output = ''
