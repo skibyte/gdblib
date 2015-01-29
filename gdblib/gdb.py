@@ -46,22 +46,22 @@ class GDB():
         self.apppath = apppath
         handle = open(self.apppath);
         handle.close();
-        arguments = [self.binary,'-i','mi','-q',self.apppath]
+        arguments = [self.binary,'-n','-i','mi','-q',self.apppath]
         self.connect(arguments)
-        self.changeDirectory(path.dirname(arguments[4])) 
+        self.changeDirectory(path.dirname(arguments[5])) 
     
     def connectCore(self,apppath,corepath):
         if self.isConnected() == True:
             raise AlreadyConnectedError()
         self.apppath = apppath
-        arguments = [self.binary,'-i','mi','-q', self.apppath, corepath]
+        arguments = [self.binary,'-n', '-i','mi','-q', self.apppath, corepath]
         self.connect(arguments)
 
     def connectRemote(self, host):
         if(self.isConnected() == True):
                 raise AlreadyConnectedError()
         self.host = host
-        arguments = [self.binary,'-i','mi','-q']
+        arguments = [self.binary,'-n', '-i','mi','-q']
         self.connect(arguments)
         self.checkConnection()
         cmd = self.factory.createTargetCommand(host)
