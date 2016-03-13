@@ -335,17 +335,12 @@ class GDBTestCase(unittest.TestCase):
 
 
 class Listener():
-    output = ''
     eventCounter = 0
-    exitCounter = 0
 
     def newFileLocation(self, newFileStr, newLineStr):
         self.newFileStr = newFileStr
         self.newLineStr = newLineStr
         self.eventCounter += 1
-
-    def newContent(self, output):
-        self.output += output
 
     def newFile(self):
         return self.newFileStr
@@ -355,9 +350,3 @@ class Listener():
 
     def newFileLocationCounter(self):
         return self.eventCounter
-
-    def standardOutputReceived(self):
-        return self.output
-
-    def exitCount(self):
-        return self.exitCounter

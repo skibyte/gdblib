@@ -12,19 +12,30 @@ See INSTALL file for details
 
 Usage
 -----
-        from gdblib import GDB
+        import os
+        from gdblib.gdb import GDB
 
-        gdb = GDB() 
-        gdb.connectApp('application', 'application arguments')
-        gdb.addBreakpoint('main.c', 54)
-        gdb.deleteBreakpoint('main.c', 54)
-        breakpoints = gdb.getBreakpoins()
-        gdb.addNewFileLocationListener(listener)
-        gdb.addStandardOutputListener(listener)
-        gdb.run()
-        gdb.step()
-        gdb.next()
-        gdb.disconnect()
+        def main():
+            test_application = 'gdblib' + os.sep + 'testapplication' + os.sep + 'app'
+            test_application_arguments = ''
+            gdb = GDB()
+            listener = Listener()
+            gdb.connectApp(test_application)
+            gdb.addBreakpoint('main.c', 20)
+            breakpoints = gdb.getBreakpoints()
+            gdb.addNewFileLocationListener(listener)
+            gdb.run(test_application_arguments)
+            gdb.step()
+            gdb.next()
+            gdb.deleteBreakpoint(1)
+            gdb.disconnect()
+
+        class Listener():
+            def newFileLocation(self, newFileStr, newLine):
+                print newFileStr + ':' + str(newLine)
+
+        if __name__== 'main':
+            main()
 
 Todo
 ----

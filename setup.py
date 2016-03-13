@@ -20,6 +20,21 @@ import os
 import sys
 import subprocess
 from gdblib import alltests
+from gdblib import readme
+
+class ReadmeTestCommand (Command):
+    description = "readme test task"
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        subprocess.call(["make", "-C","gdblib/testapplication"])
+        sys.exit(readme.main())
 
 class TestCommand (Command):
     description = "test task"
@@ -65,7 +80,8 @@ setup(
     keywords=["gdb", "python"],
     cmdclass = {
         'test' : TestCommand,
-        'coverage' : CoverageCommand
+        'coverage' : CoverageCommand,
+        'readme' : ReadmeTestCommand
     }
 )
 
