@@ -72,7 +72,7 @@ class CoverageCommand (Command):
 setup(
     name="gdblib",
     description="A gdb module interface",
-    version="0.4.8",
+    version="0.4.9",
     author="Fernando Castillo",
     author_email="skibyte@gmail.com",
     url = "https://github.com/skibyte/gdblib",
