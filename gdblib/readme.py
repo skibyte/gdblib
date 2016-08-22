@@ -38,5 +38,5 @@ class Listener():
     def newFileLocation(self, newFileStr, newLine):
         print newFileStr + ':' + str(newLine)
 
-if __name__== 'main':
+if __name__== '__main__':
     main()
