@@ -38,17 +38,19 @@ class ReadmeTestCommand (Command):
 
 class TestCommand (Command):
     description = "test task"
-    user_options = []
+    user_options = [
+            ('log=', None, 'Enables logs fot the testcases'),
+            ]
 
     def initialize_options(self):
-        pass
+        self.log = '0'
 
     def finalize_options(self):
         pass
 
     def run(self):
         subprocess.call(["make", "-C","gdblib/testapplication"])
-        sys.exit(alltests.main())
+        sys.exit(alltests.main(self.log))
 
 class CoverageCommand (Command):
     description = "coverage task"

@@ -37,6 +37,24 @@ Usage
         if __name__== '__main__':
             main()
 
+Enabling logs for Gdb lib
+-------------------------
+        # Log levels are defined in the standard logging module
+        import logging
+
+        gdblib.log.Logger.enable(True)
+        gdblib.log.Logger.level(logging.DEBUG)
+        gdblib.log.Logger.logToFile('gdblib.log')
+        gdblib.log.Logger.logToConsole(True)
+
+**Available log levels:**
+
+        logging.DEBUG
+        logging.INFO
+        logging.WARNING
+        logging.ERROR
+        logging.CRITICAL
+
 Todo
 ----
 * Add attach process support

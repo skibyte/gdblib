@@ -19,15 +19,23 @@ import unittest;
 import sys
 
 
-from gdblib.gdbservertestcase import GDBServerTestCase
-from gdblib.gdbtestcase import GDBTestCase
-from gdblib.gdbinterpretertestcase import GDBInterpreterTestCase
-from gdblib.utiltestcase import UtilTestCase
-from gdblib.breakpointtestcase import BreakpointTestCase
-from gdblib.completevisitortestcase import *
+import gdblib
 
-def main():
+from gdbservertestcase import GDBServerTestCase
+from gdbtestcase import GDBTestCase
+from gdbinterpretertestcase import GDBInterpreterTestCase
+from utiltestcase import UtilTestCase
+from breakpointtestcase import BreakpointTestCase
+from completevisitortestcase import *
+import logging
+
+def main(log):
     loader = unittest.TestLoader()
+
+    if log == '1':
+        gdblib.log.Logger.enable(True)
+        gdblib.log.Logger.level(logging.DEBUG)
+        gdblib.log.Logger.logToFile('gdblib.log')
 
     suite = unittest.TestSuite()
     suite.addTests(loader.loadTestsFromTestCase(GDBServerTestCase))
@@ -39,6 +47,3 @@ def main():
     runner = unittest.TextTestRunner(verbosity=1)
     result = runner.run(suite)
     return len(result.errors) + len(result.failures)
-
-if __name__ == '__main__':
-    sys.exit(main())
