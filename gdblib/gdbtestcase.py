@@ -311,7 +311,7 @@ class GDBTestCase(unittest.TestCase):
             self.gdbRemote.connectRemote(':1234')
             symbol = self.gdbRemote.symbolFile('gdblib/testapplication/app')
             path =  'gdblib/testapplication/app'
-            self.assertEquals(path, symbol)
+            self.assertTrue(symbol == os.getcwd() + os.sep + path or symbol == path)
             self.remoteServer.stop()
         else:
             print "\n" + self.testSymbolFile.__name__ + " is not implemented yet"
